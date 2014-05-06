@@ -1,0 +1,110 @@
+body{
+    overflow-x:hidden;  
+    overflow-y:scroll;   
+    background-image: url(../img/fondo2.jpg);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+#main{
+    margin-top: 4em;
+    padding: 1em;
+}
+.titulo{
+    text-transform:uppercase;
+    border-top:1px solid #ccc;
+    border-bottom:1px solid #ccc;
+    font-size: 0.8em;
+    font-weight: bold;
+    background: #eee;
+}
+.submenu{
+    border: 1px solid #ccc;
+    border-radius: 0.5em;
+    overflow: hidden;
+}
+table#datagridAnalisisGAP td{
+    vertical-align: middle;
+}
+table#datagridAnalisisGAP tr.control{
+    vertical-align: middle;
+    font-size: 0.9em;
+}
+table#datagridAnalisisGAP tr.dominio{
+    text-transform: uppercase;
+    font-weight: bold;
+}
+table#datagridAnalisisGAP tr.objetivo td:nth-child(2){
+    padding-left: 1em;
+}
+table#datagridAnalisisGAP tr.control td:nth-child(2){
+    padding-left: 2em;
+}
+table#datagridAnalisisGAP tr.control td input, table#datagridAnalisisGAP tr.control td select{
+    font-size: 0.9em;
+}
+table#datagridAnalisisGAP th{
+    text-align: center;
+}
+.bs-sidebar{ background: rgba(255,255,255,1); }
+
+.dominio-detalle{
+    cursor: pointer;
+}
+
+table.gap-table{
+
+}
+table.gap-table tr{
+    vertical-align: middle;
+}
+table.gap-table tr td{
+    vertical-align: middle;
+}
+
+#dataCalendario{
+    padding: 0;
+}
+.dia-calendario{
+    border-left:1px solid #eee;
+    height: 100px;
+    width: 14.28%;
+    display: inline-block;
+    vertical-align: top;
+    height: 150px;
+
+}
+.dia-calendario:first-child(){
+}
+.dia-calendario .title{
+    background: #eee;
+    text-align: right;
+    font-size: 0.8em;
+    font-weight: bold;
+    padding: 0.3em;
+}
+.dia-calendario .cuerpo ul{
+    list-style: square;
+    margin-left: none;
+    font-size: 0.8em;
+}
+.panel-title{
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    padding: 0.2em;
+}
+
+.riesgo-muyalto{
+    background-color: rgb(230, 109, 116);
+}
+.riesgo-alto{
+    background-color: rgb(250, 168, 123);
+}
+.riesgo-bajo{
+    background-color: rgb(223, 246, 149);
+}
+td.center, th.center{
+    text-align: center;
+}
+

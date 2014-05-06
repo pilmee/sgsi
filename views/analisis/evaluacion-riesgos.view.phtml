@@ -1,0 +1,131 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Evaluación de Riesgos</h3>
+    </div>
+    <div class="panel-body">
+    	<div id="contenedor-graficos" class="row">
+    		<div id="graficoRiesgosDeActivos" class="col-md-6"></div>
+    		<div id="graficoRiesgosRespectoNRA" class="col-md-6"></div>
+    	</div>
+    	<div style="text-align:center;font-size:0.8em;padding:2em;">
+    		<b>Abreviaturas:</b><br>
+			<b>N.R.A:</b> Nivel de Riesgo Aceptable.<br/>
+			(*) Aplicable solo cuando se define un nivel de riesgo aceptable global para todos los activos.
+    	</div>
+
+    	<div id="dataReporteDeRiesgos">
+    		<table id="datagridAmenazasProcesadas" class="table table-condensed table-hover" style="font-size:0.9em">
+    			<thead>
+    				<th>#</th>
+    				<th>Activo</th>
+    				<th>Amenaza</th>
+    				<th class="center">NRA</th>
+    				<th class="center">Riesgo</th>
+    			</thead>
+    			<tbody>
+    			<?php
+    				$i = 1;
+    				$query_amenazas_procesadas = $objAmenaza->ConsultarAmenazasAnalizadas();
+    				while ($reg = $query_amenazas_procesadas->fetchObject()) {
+    					$nra = $objAmenaza->CalificaRiesgo($reg->nra);
+    					echo '<tr>
+    							<td>'.$i.'</td>
+    							<td>'.$reg->activo.'</td>
+    							<td>'.$reg->vulnerabilidad.'</td>
+    							<td class="center" style="background:'.$nra["color"].'">'.$nra["texto"].'</td>
+    							<td class="center" style="background:'.$reg->colorriesgo.'">'.$reg->detalle.'</td>
+    						  </tr>';
+    					$i++;
+    				}
+    			?>
+    			</tbody>
+    		</table>
+    	</div>
+    </div>
+ </div>
+
+<script src="./static/js/highcharts.js"></script>
+<script src="./static/js/exporting.js"></script>
+<script>
+graficoRiesgosDeActivos();
+graficoRiesgosRespectoNRA();
+
+	function graficoRiesgosDeActivos(){
+		$('#graficoRiesgosDeActivos').highcharts({
+	        chart: {
+	            plotBackgroundColor: null,
+	            plotBorderWidth: null,
+	            plotShadow: false
+	        },
+	        title: {
+	            text: 'Riesgos de los Activos'
+	        },
+	        tooltip: {
+	    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	        },
+	        plotOptions: {
+	            pie: {
+	                allowPointSelect: true,
+	                cursor: 'pointer',
+	                dataLabels: {
+	                    enabled: true,
+	                    color: '#000000',
+	                    connectorColor: '#000000',
+	                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+	                },
+	                showInLegend: true
+	            }
+	        },
+	        series: [{
+	            type: 'pie',
+	            name: 'Riesgo',
+	            data: [
+	                ['No Definido',   <?=$objAmenaza->ContarAmenazasDeActivo(0)?>],
+	                ['Muy Bajo',       <?=$objAmenaza->ContarAmenazasDeActivo(1)?>],
+	                ['Bajo',    <?=$objAmenaza->ContarAmenazasDeActivo(2)?>],
+	                ['Medio',     <?=$objAmenaza->ContarAmenazasDeActivo(3)?>],
+	                ['Alto',   <?=$objAmenaza->ContarAmenazasDeActivo(4)?>],
+	                ['Muy Alto',   <?=$objAmenaza->ContarAmenazasDeActivo(5)?>]
+	            ]
+	        }]
+	    });
+	};
+
+	function graficoRiesgosRespectoNRA(){
+		$('#graficoRiesgosRespectoNRA').highcharts({
+	        chart: {
+	            plotBackgroundColor: null,
+	            plotBorderWidth: null,
+	            plotShadow: false
+	        },
+	        title: {
+	            text: 'Riesgos respecto a los NRA'
+	        },
+	        tooltip: {
+	    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	        },
+	        plotOptions: {
+	            pie: {
+	                allowPointSelect: true,
+	                cursor: 'pointer',
+	                dataLabels: {
+	                    enabled: true,
+	                    color: '#000000',
+	                    connectorColor: '#000000',
+	                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+	                },
+	                showInLegend: true
+	            }
+	        },
+	        series: [{
+	            type: 'pie',
+	            name: 'Riesgos',
+	            data: [
+	                ['Riesgo no definido',   <?=$objAmenaza->ContarAmenazasDeActivoSegunNRA(0)?>],
+	                ['Superan NRA',       <?=$objAmenaza->ContarAmenazasDeActivoSegunNRA(1)?>],
+	                ['No Superan NRA',    <?=$objAmenaza->ContarAmenazasDeActivoSegunNRA(2)?>]
+	            ]
+	        }]
+	    });
+	};
+</script>

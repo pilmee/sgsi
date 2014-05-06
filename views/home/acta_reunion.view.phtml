@@ -1,0 +1,65 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Acta de Reunion</h3>
+    </div>
+    <div class="panel-body">
+        <div style="border-bottom:1px solid #ccc; margin-bottom: 1em; padding-bottom: 1em;">
+            <div class="btn-group btn-group-sm">
+                <button id="btnActaNueva" type="button" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Nueva Acta</button>
+                <button id="btnActaActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Actualizar</button>
+                <button id="btnActaEliminar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Eliminar</button>
+            </div>
+        </div>
+        <div id="dataGridActas">
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>Asunto</th>
+                        <th>Fecha</th>
+                        <th>Tipo de Acta</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $query_acta_reunion = $objActaReunion->ConsultarActas();
+                        while($reg = $query_acta_reunion->fetchObject())
+                        {
+                            $pag = $_GET["pag"];
+                            echo '<tr><td><a href="?pag='.$pag.'&acta='.$reg->idacta_reunion.'">'.$reg->asunto.'</a></td><td>'.$reg->fecha.'</td><td>'.$reg->nombre.'</td><td><input type="checkbox" name="actas[]" value="'.$reg->idacta_reunion.'"></td></tr>';
+                        }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).on("ready", function(){
+        $("button#btnActaNueva").click(ActaNueva);
+        $("button#btnActaActualizar").click(ActaActualizar);
+        $("button#btnActaEliminar").click(ActaEliminar);
+        
+        
+        function ActaNueva() {
+            $.post("./ajax/home/acta_nuevo.ajax.php", {}, function(r){
+                ActaActualizar();
+            });
+        }
+        
+        function ActaActualizar() {
+            $.get("./ajax/home/acta_consultar.ajax.php", { pag : '<?php echo $_GET["pag"]; ?>' }, function(r){
+                $("div#dataGridActas table tbody").html(r);
+            });
+        }
+        
+        function ActaEliminar() {
+            $("input[type=checkbox]:checked").each(function(index, val){
+                $.post("./ajax/home/acta_eliminar.ajax.php", { acta: val.value }, function(r){
+                    
+                });
+            });
+            ActaActualizar();
+        }
+    });
+</script>

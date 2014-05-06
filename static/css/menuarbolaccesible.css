@@ -1,0 +1,47 @@
+#menu1 {
+	font-size: 90%;
+	list-style-image: url(../img/doct.gif);
+	border: 1px solid #006699;
+	width: 200px;
+	padding-top: .5em;
+	padding-bottom: .5em;
+	list-style: inside;
+}
+html > body #menu1{
+	list-style: outside;
+}
+.cAbierta{
+	list-style-type: none;
+	list-style-image: url(../img/carpabiertat.gif);
+}
+.cAbiertaSeleccionada{
+	list-style-type: none;
+	list-style-image: url(../img/carpabiertasel.gif);
+}
+.cCerradaSeleccionada{
+	list-style-type: none;
+	list-style-image: url(../img/carpcerradasel.gif);
+}
+.cCerrada{
+	list-style-type: none;
+	list-style-image: url(../img/carpcerradat.gif);
+}
+.menuDoc{
+	list-style-type: none;
+	list-style-image: url(../img/doct.gif);
+}
+.tagApartado, a.tagApartado{
+	cursor: pointer;
+	font-weight: bold;
+	text-decoration: none;
+}
+.documentoActual{
+	list-style-image: url(../img/docsel.gif);
+}
+
+#menu1 a {
+	color: #006699;
+}
+.documentoActual a{
+	color:#993300;
+}

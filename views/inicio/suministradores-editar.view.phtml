@@ -1,0 +1,429 @@
+<?php
+    $suministrador = $_GET["suministrador"];
+    $data = $objSuministrador->AbrirSuministrador($suministrador);
+    $reg_sum = $data->fetchObject();
+    //var_dump($reg_sum);
+?>
+<div class="btn-group btn-group-sm" style="display: block; overflow: hidden; margin-bottom: 1em; border-bottom: 1px solid #ccc; padding-bottom: 1em;">
+    <button id="btnSuministradorEditarAtras" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Volver Atras</button>
+    <button id="btnSuministradorEditarActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+    <!--
+    <button id="btnSuministradorEditarEvaluar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-usd"></span> Evaluar</button>
+    -->
+    <button id="btnSuministradorEditarDescargar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> Descargar</button>
+</div>
+
+<div style="display: block; overflow: hidden">
+    <form id="frmSuministrador" class="form-horizontal" role="form" method="post" action="suministrador_actualizar.ajax.php">
+        <input type="hidden" name="txtIdSuministrador" value="<?=$reg_sum->idsuministrador?>" />
+        
+        <div class="form-group">
+            <label for="txtRuc" class="col-lg-2 control-label">RUC</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtRuc" name="txtRuc" placeholder="RUC" value="<?=$reg_sum->RUC?>" style="width:200px">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtRazonSocial" class="col-lg-2 control-label">Razón Social</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtRazonSocial" name="txtRazonSocial" placeholder="Razon Social" value="<?=$reg_sum->razon_social?>" required >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtRazonSocial" class="col-lg-2 control-label">Responsable</label>
+            <div class="col-lg-10">
+                <select class="form-control input-sm" id="cboResponsable" name="cboResponsable" style="width:auto;">
+                	<option value="">Seleccione un empleado</option>
+                	<?php
+                        $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                        while($reg2 = $query_empleado->fetchObject()){
+                            echo '<option value="'.$reg2->idempleado.'"';
+                                if($reg_sum->idempleado == $reg2->idempleado){ echo ' selected '; }
+                            echo '>'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                        }
+                    ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtDireccion" class="col-lg-2 control-label">Dirección</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtDireccion" name="txtDireccion" placeholder="Dirección" value="<?=$reg_sum->direccion?>">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtPoblacion" class="col-lg-2 control-label">Población</label>
+            <div class="col-lg-10">
+                <input type="number" min="0" class="form-control input-sm" id="txtPoblacion" name="txtPoblacion" placeholder="Poblacion" value="<?=$reg_sum->poblacion?>" style="width:150px;" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtProvincia" class="col-lg-2 control-label">Provincia</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtProvincia" name="txtProvincia" placeholder="Provincia" value="<?=$reg_sum->provincia?>" style="width:300px;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtPais" class="col-lg-2 control-label">País</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtPais" name="txtPais" placeholder="Pais" value="<?=$reg_sum->pais?>" style="width:200px;">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtDescripcion" class="col-lg-2 control-label">Descripción</label>
+            <div class="col-lg-10">
+                <textarea class="form-control input-sm" id="txtDescripcion" name="txtDescripcion" placeholder="Descripcion"><?=$reg_sum->descripcion?></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboEstado" class="col-lg-2 control-label">Estado</label>
+            <div class="col-lg-10">
+                <select class="form-control input-sm" id="cboEstado" name="cboEstado" style="width:150px;">
+                	<option value="1" <?php if($reg_sum->estado){ echo " selected"; } ?>>Alta</option>
+                	<option value="0" <?php if(!$reg_sum->estado){ echo " selected"; } ?>>Baja</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtComentario" class="col-lg-2 control-label">Comentario</label>
+            <div class="col-lg-10">
+                <textarea class="form-control input-sm" id="txtComentario" name="txtComentario" placeholder="Comentario"><?=$reg_sum->comentario?></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboIndicadorAsociado" class="col-lg-2 control-label">Indicador Asociado</label>
+            <div class="col-lg-10">
+                <select class="form-control input-sm" id="cboIndicadorAsociado" name="cboIndicadorAsociado" >
+                	<option value="">Seleccione un empleado</option>
+                	<?php
+                        $query_indicador_asociado = $objSuministrador->ConsultarIndicadoresAsociados();
+                        while($reg2 = $query_indicador_asociado->fetchObject()){
+                            echo '<option value="'.$reg2->idindicador_asociado.'"';
+                                if($reg_sum->idindicador_asociado == $reg2->idindicador_asociado){ echo ' selected '; }
+                            echo '>'.$reg2->detalle.'</option>';
+                        }
+                    ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboObjetivoAreasAfectadas" class="col-lg-2 control-label">Contratos con el Suministrador</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-3" style="padding-right:5px;">
+                        <input  class="form-control input-sm" name="txtProductoServicio" id="txtProductoServicio" placeholder="Producto/Servicio" />
+                    </div>
+					<div  class="col-lg-2"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="date" name="txtFechaInicio" id="txtFechaInicio" />
+					</div>
+					<div  class="col-lg-2"  style="padding:0 5px;">
+						<input  class="form-control input-sm" type="date" name="txtFechaFin" id="txtFechaFin" />
+					</div>
+					<div  class="col-lg-3"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="text" name="txtSoporte" id="txtSoporte" placeholder="Soporte" />
+					</div>
+                    <div class="col-lg-2" style="padding:0;">
+                        <div class="btn-group btn-group-sm">
+                            <button id="btnSuministradorContratosAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridContratosSuministrador" class="table table-condensed table-hover" style="font-size:0.8em">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Producto/Servicio</th>
+                                <th>Inicio contrato</th>
+                                <th>Fin contrato</th>
+                                <th>Soporte</th>
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboObjetivoAreasAfectadas" class="col-lg-2 control-label">Contactos/Interlocutores</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-2" style="padding-right:5px;">
+                        <input  class="form-control input-sm" type="text" name="txtSuministradorContactoNombre" id="txtSuministradorContactoNombre" placeholder="Nombre" />
+                    </div>
+					<div  class="col-lg-2"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="text" name="txtSuministradorContactoCargo" id="txtSuministradorContactoCargo" placeholder="Cargo" />
+					</div>
+					<div  class="col-lg-2"  style="padding:0 5px;">
+						<input  class="form-control input-sm" type="text" name="txtSuministradorContactoTelefono" id="txtSuministradorContactoTelefono" placeholder="Telefono" />
+					</div>
+					<div  class="col-lg-2"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="text" name="txtSuministradorContactoEmail" id="txtSuministradorContactoEmail" placeholder="E-mail" />
+					</div>
+					<div  class="col-lg-2"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="text" name="txtSuministradorContactoComentario" id="txtSuministradorContactoComentario" placeholder="Comentario" />
+					</div>
+                    <div class="col-lg-2" style="padding:0;">
+                        <div class="btn-group btn-group-sm">
+                            <button id="btnSuministradorContactosAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridContactosSuministrador" class="table table-condensed table-hover" style="font-size:0.8em">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Nombre</th>
+                                <th>Cargo</th>
+                                <th>Telefono</th>
+                                <th>Email</th>
+                                <th>Comentario</th>
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboObjetivoAreasAfectadas" class="col-lg-2 control-label">SLAs asociados al Suministrador</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-4" style="padding-right:5px;">
+                        <input  class="form-control input-sm" type="text" name="txtSuministradorSLA" id="txtSuministradorSLA" placeholder="SLA" />
+                    </div>
+					<div  class="col-lg-6"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="text" name="txtSuministradorSLADescripcion" id="txtSuministradorSLADescripcion" placeholder="Descripcion" />
+					</div>
+					
+                    <div class="col-lg-2" style="padding:0;">
+                        <div class="btn-group btn-group-sm">
+                            <button id="btnSuministradorSLAAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridSLASuministrador" class="table table-condensed table-hover" style="font-size:0.8em">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>SLA</th>
+                                <th>Descripción</th>
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboObjetivoAreasAfectadas" class="col-lg-2 control-label">Registro de Seguimientos</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-4" style="padding-right:5px;">
+                        <input  class="form-control input-sm" type="text" name="txtSuministradorSeguimientoUsuario" id="txtSuministradorSeguimientoUsuario" placeholder="Usuario" />
+                    </div>
+					<div  class="col-lg-2"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="date" name="txtSuministradorSeguimientoFecha" id="txtSuministradorSeguimientoFecha" placeholder="Descripcion" />
+					</div>
+					<div  class="col-lg-4"  style="padding: 0 5px;">
+						<input  class="form-control input-sm" type="text" name="txtSuministradorSeguimientoDescripcion" id="txtSuministradorSeguimientoDescripcion" placeholder="Descripcion" />
+					</div>
+					
+                    <div class="col-lg-2" style="padding:0;">
+                        <div class="btn-group btn-group-sm">
+                            <button id="btnSuministradorSeguimientoAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridSeguimientoSuministrador" class="table table-condensed table-hover" style="font-size:0.8em">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Usuario</th>
+                                <th>Fecha</th>
+                                <th>Descripcion</th>
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<script>
+	/*** AUTOLOADS ***/
+	SuministradorContratoConsultar();
+	SuministradorContactoConsultar();
+	SuministradorSLAConsultar();
+	SuministradorSeguimientoConsultar();
+
+
+	/*** EVENTOS ***/
+	$("button#btnSuministradorEditarAtras").click(function(){ history.back(); });
+	$("button#btnSuministradorEditarActualizar").click(function(){
+        $("form#frmSuministrador").submit();
+    });
+
+    $("form#frmSuministrador").submit(function(e){
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
+       
+        $.ajax({
+            url: "./ajax/inicio/"+$(this).attr("action"),
+            type: 'POST',
+            data: formData,
+            async: false,
+            success: function (data) {
+                alert(data); //console.log(data);
+                
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+
+
+    $("button#btnSuministradorContratosAgregar").click(SuministradorContratoAgregar);
+    $("button#btnSuministradorContactosAgregar").click(SuministradorContactoAgregar);
+    $("button#btnSuministradorSLAAgregar").click(SuministradorSLAAgregar);
+    $("button#btnSuministradorSeguimientoAgregar").click(SuministradorSeguimientoAgregar);
+
+	/*** FUNCIONES ***/
+
+	function SuministradorContratoAgregar(){
+		var data = { 
+						id: 		<?=$_GET["suministrador"]?>,
+						servicio: 	$("input#txtProductoServicio").val(), 
+						inicio: 	$("input#txtFechaInicio").val(), 
+						fin: 		$("input#txtFechaFin").val(), 
+						soporte: 	$("input#txtSoporte").val() 
+					};
+		console.log(data);
+		$.post("./ajax/inicio/suministrador_contrato_agregar.ajax.php", data, function(r){
+			console.log(r);
+			SuministradorContratoConsultar();
+			$("input#txtProductoServicio").val("");
+			$("input#txtFechaInicio").val("");
+			$("input#txtFechaFin").val("");
+			$("input#txtSoporte").val("");
+		});
+	};
+	function SuministradorContactoAgregar(){
+		var data = { 	
+						id: 		<?=$_GET["suministrador"]?>, 
+						nombre:  	$("input#txtSuministradorContactoNombre").val(), 
+						cargo: 		$("input#txtSuministradorContactoCargo").val(), 
+						telefono: 	$("input#txtSuministradorContactoTelefono").val(), 
+						email: 		$("input#txtSuministradorContactoEmail").val(), 
+						comentario: $("input#txtSuministradorContactoComentario").val() 
+					};
+		$.post("./ajax/inicio/suministrador_contacto_agregar.ajax.php", data, function(r){
+			console.log(r);
+			SuministradorContactoConsultar();
+				$("input#txtSuministradorContactoNombre").val();
+				$("input#txtSuministradorContactoCargo").val();
+				$("input#txtSuministradorContactoTelefono").val();
+				$("input#txtSuministradorContactoEmail").val();
+				$("input#txtSuministradorContactoComentario").val();
+		});
+	};
+	function SuministradorSLAAgregar(){
+		var data = { 	
+						id: 			<?=$_GET["suministrador"]?>,
+						sla: 			$("input#txtSuministradorSLA").val(), 
+						descripcion: 	$("input#txtSuministradorSLADescripcion").val() 
+					};
+		$.post("./ajax/inicio/suministrador_sla_agregar.ajax.php", data, function(r){
+			console.log(r);
+			SuministradorSLAConsultar();
+			$("input#txtSuministradorSLA").val("");
+			$("input#txtSuministradorSLADescripcion").val(""); 
+		});
+	};
+	function SuministradorSeguimientoAgregar(){
+		var data = { 
+						id: 			<?=$_GET["suministrador"]?>,
+						usuario: 		$("input#txtSuministradorSeguimientoUsuario").val(), 
+						fecha: 			$("input#txtSuministradorSeguimientoFecha").val(), 
+						descripcion: 	$("input#txtSuministradorSeguimientoDescripcion").val() 
+					};
+		$.post("./ajax/inicio/suministrador_seguimiento_agregar.ajax.php", data, function(r){
+			console.log(r);
+			SuministradorSeguimientoConsultar();
+				$("input#txtSuministradorSeguimientoUsuario").val("");
+				$("input#txtSuministradorSeguimientoFecha").val("");
+				$("input#txtSuministradorSeguimientoDescripcion").val("");
+		});
+	};
+
+	function SuministradorContratoConsultar(){
+		var data = { 
+						empresa: <?=$_SESSION["empresa"]?>, 
+						suministrador: <?=$_GET["suministrador"]?> 
+					};
+		$.get("./ajax/inicio/suministrador_contrato_consultar.ajax.php", data, function(r){
+			$("table#DatagridContratosSuministrador tbody").html(r);
+		});
+	};
+	function SuministradorContactoConsultar(){
+		var data = { 
+						empresa: <?=$_SESSION["empresa"]?>, 
+						suministrador: <?=$_GET["suministrador"]?> 
+					};
+		$.get("./ajax/inicio/suministrador_contacto_consultar.ajax.php", data, function(r){
+			$("table#DatagridContactosSuministrador tbody").html(r);
+		});
+	};
+	function SuministradorSLAConsultar(){
+		var data = { 
+						empresa: <?=$_SESSION["empresa"]?>, 
+						suministrador: <?=$_GET["suministrador"]?> 
+					};
+		$.get("./ajax/inicio/suministrador_sla_consultar.ajax.php", data, function(r){
+			$("table#DatagridSLASuministrador tbody").html(r);
+		});
+	};
+	function SuministradorSeguimientoConsultar(){
+		var data = { 
+						empresa: <?=$_SESSION["empresa"]?>, 
+						suministrador: <?=$_GET["suministrador"]?> 
+					};
+		$.get("./ajax/inicio/suministrador_seguimiento_consultar.ajax.php", data, function(r){
+			$("table#DatagridSeguimientoSuministrador tbody").html(r);
+		});
+	};
+
+</script>

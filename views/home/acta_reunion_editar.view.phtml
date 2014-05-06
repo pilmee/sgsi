@@ -1,0 +1,421 @@
+<?php
+    //if(is_numeric($_GET["acta"])){
+        $acta = $_GET["acta"];
+        $data = $objActaReunion->AbrirActa($_GET["acta"]);
+        $reg = $data->fetchObject();
+        //var_dump($reg);
+    //}
+?>
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Acta de Reunion</h3>
+    </div>
+    <div class="panel-body">
+        <div style="border-bottom:1px solid #ccc; margin-bottom: 1em; padding-bottom: 1em;">
+            <div class="btn-group btn-group-sm">
+                <button id="btnActaEditarAtras" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Atras</button>
+                <button id="btnActaActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+                <button id="btnActaEliminar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-envelope"></span> Enviar Acta</button>
+                <button id="btnActaEliminar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> Descargar</button>
+            </div>
+        </div>
+            <div id="contenedor-acta-reunion-form">
+            <form id="frmActaReunion" class="form-horizontal" role="form" method="post" action="acta_actualizar.ajax.php">
+                
+                <input type="hidden" name="txtIDActaReunion" value="<?=$reg->idacta_reunion?>" />
+                
+                <div class="form-group">
+                    <label for="txtAsunto" class="col-lg-2 control-label">Asunto</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control input-sm" id="txtAsunto" name="txtAsunto" placeholder="Asunto" value="<?=$reg->asunto?>" required >
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="txtFecha" class="col-lg-2 control-label">Fecha</label>
+                    <div class="col-lg-10">
+                        <input type="datetime" class="form-control input-sm" id="txtFecha" name="txtFecha" placeholder="Fecha" value="<?=$reg->fecha?>" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cboTipoActaReunion" class="col-lg-2 control-label">Tipo Acta de Reunion</label>
+                    <div class="col-lg-10">
+                        <select  class="form-control input-sm" id="cboTipoActaReunion" name="cboTipoActaReunion" style="max-width: 300px; width: 100%">
+                        <?php
+                            $query_tipo_acta_reunion = $objActaReunion->ConsultarTipoActas();
+
+                            while($reg2 = $query_tipo_acta_reunion->fetchObject()){
+                                echo '<option value="'.$reg2->idtipo_acta_reunion.'"';
+                                if($reg2->idtipo_acta_reunion == $reg->idtipo_acta_reunion) { echo " selected "; }
+                                echo '>'.$reg2->nombre.'</option>';
+                            }
+                            
+                        ?>                            
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="txtDuracion" class="col-lg-2 control-label">Duración</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control input-sm" id="txtDuracion" name="txtDuracion" placeholder="Duración"  value="<?=$reg->duracion?>">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="txtLugar" class="col-lg-2 control-label">Lugar</label>
+                    <div class="col-lg-10">
+                        <input type="text" class="form-control input-sm" id="txtLugar" name="txtLugar" placeholder="Lugar"  value="<?=$reg->lugar?>">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="txtDescripcion" class="col-lg-2 control-label">Descripcion</label>
+                    <div class="col-lg-10">
+                        <textarea class="form-control input-sm" id="txtDescripcion" name="txtDescripcion" placeholder="Descripcion"><?=$reg->descripcion?></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cboAsistentes" class="col-lg-2 control-label">Asistentes</label>
+                    <div class="col-lg-10">
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <select class="form-control input-sm" id="cboEmpleados" name="cboEmpleados">
+                                <?php
+                                    $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                                    while($reg2 = $query_empleado->fetchObject()){
+                                        echo '<option value="'.$reg2->idempleado.'">'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                                    }
+                                ?>
+                                </select>                                
+                            </div>
+                            <div class="col-lg-2 checkbox">
+                                <label>
+                                    <input type="checkbox" id="chkEmpleadoResponsable" name="chkEmpleadoResponsable" value="true" /> Responsable
+                                </label>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="btn-group btn-group-sm">
+                                    <button id="btnActaReunionEmpleadoAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    <button id="btnActaReunionEmpleadoNuevo" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-file"></span> Nuevo</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 0.2em;">
+                            <table id="DatagridActaReunionAsistentes" class="table table-condensed table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>N</th>
+                                        <th>Apellidos y Nombres</th>
+                                        <th>Cargo</th>
+                                        <th>Responsable en acta</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cboPuntosTratados" class="col-lg-2 control-label">Puntos tratados</label>
+                    <div class="col-lg-10">
+                        <div class="row">
+                            <div class="col-lg-4" style="padding-right: 0.4em;">
+                                <input type="text" name="txtActaReunionPuntosTratadosActividad" id="txtActaReunionPuntosTratadosActividad" class="form-control input-sm" placeholder="Actividad / Documento" />
+                            </div>
+                            <div class="col-lg-6" style="padding-right: 0.4em; padding-left: 0;">
+                                <input type="text" name="txtActaReunionPuntosTratadosDescripcion" id="txtActaReunionPuntosTratadosDescripcion" class="form-control input-sm" placeholder="Descripcion" />
+                            </div>
+                            <div class="col-lg-2" style="padding-right: 0.4em">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" id="btnActaReunionAgregarPuntoTratado" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 0.2em;">
+                            <table id="DatagridActaReunionPuntosTratados" class="table table-condensed table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>N</th>
+                                        <th>Actividad / Documento</th>
+                                        <th>Descripcion</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cboConclusiones" class="col-lg-2 control-label">Conclusiones</label>
+                    <div class="col-lg-10">
+                        <div class="row">
+                            <div class="col-lg-4" style="padding-right: 0.4em;">
+                                <input type="text" name="txtActaReunionConclusionNombre" id="txtActaReunionConclusionNombre" class="form-control input-sm" placeholder="Nombre" />
+                            </div>
+                            <div class="col-lg-6" style="padding-right: 0.4em; padding-left: 0;">
+                                <input type="text" name="txtActaReunionConclusionDescipcion" id="txtActaReunionConclusionDescipcion" class="form-control input-sm" placeholder="Descripcion" />
+                            </div>
+                            <div class="col-lg-2" style="padding-right: 0.4em">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" id="btnActaReunionAgregarConclusion" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 0.2em;">
+                            <table id="DatagridActaReunionConclusiones" class="table table-condensed table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>N</th>
+                                        <th>Nombre</th>
+                                        <th>Descripcion</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cboAsuntosPendientes" class="col-lg-2 control-label">Asuntos Pendientes</label>
+                    <div class="col-lg-10">
+                        <div class="row">
+                            <div class="col-lg-4" style="padding-right: 0.4em;">
+                                <input type="text" name="txtActaReunionAsuntoPendienteAccion" id="txtActaReunionAsuntoPendienteAccion" class="form-control input-sm" placeholder="Acciones" />
+                            </div>
+                            <div class="col-lg-4" style="padding-right: 0.4em; padding-left: 0;">
+                                <select name="cboActaReunionAsuntoPendienteResponsable" id="cboActaReunionAsuntoPendienteResponsable" class="form-control input-sm">
+                                    <?php
+                                    $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                                    while($reg2 = $query_empleado->fetchObject()){
+                                        echo '<option value="'.$reg2->idempleado.'">'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-lg-2" style="padding-right: 0.4em; padding-left: 0;">
+                                <input type="text" name="txtActaReunionAsuntoPendientePlazo" id="txtActaReunionAsuntoPendientePlazo" class="form-control input-sm" placeholder="Plazo" />
+                            </div>
+                            <div class="col-lg-2" style="padding-right: 0.4em">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" id="btnActaReunionAgregarAsuntoPendiente" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 0.2em;">
+                            <table id="DatagridActaReunionAsuntosPendientes" class="table table-condensed table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>N</th>
+                                        <th>Acciones</th>
+                                        <th>Responsable</th>
+                                        <th>Plazo</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cboDocumentacion" class="col-lg-2 control-label">Documentacion</label>
+                    <div class="col-lg-10">
+                       <div class="row">
+                            <div class="col-lg-4" style="padding-right: 0.4em;">
+                                <input type="text" name="txtActaReunionDocumentacionNombre" id="txtActaReunionDocumentacionNombre" class="form-control input-sm" placeholder="Nombre" />
+                            </div>
+                            <div class="col-lg-4" style="padding-right: 0.4em; padding-left: 0;">
+                                <input type="text" name="txtActaReunionDocumentacionEntrego" id="txtActaReunionDocumentacionEntrego" class="form-control input-sm" placeholder="Entrego" />
+                            </div>
+                            <div class="col-lg-2" style="padding-right: 0.4em; padding-left: 0;">
+                                <input type="text" name="txtActaReunionDocumentacionReferencia" id="txtActaReunionDocumentacionReferencia" class="form-control input-sm" placeholder="Referencia" />
+                            </div>
+                            <div class="col-lg-2" style="padding-right: 0.4em">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" id="btnActaReunionAgregarDocumentacion" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 0.2em;">
+                            <table id="DatagridActaReunionDocumentacion" class="table table-condensed table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>N</th>
+                                        <th>Nombre</th>
+                                        <th>Entrego</th>
+                                        <th>Referencia</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    
+    
+    $(document).on("ready", function(){
+        $("button#btnActaEditarAtras").click(function(){
+            history.back();
+        });
+        
+        $("button#btnActaActualizar").click(function(){
+            $("form#frmActaReunion").submit();
+        });
+        
+        $("form#frmActaReunion").submit(function(e){
+            e.preventDefault();
+            $.post("./ajax/home/"+$(this).attr("action"), $(this).serialize(), function(r){
+                alert(r);
+            });
+        });
+        
+        
+        $("button#btnActaReunionEmpleadoAgregar").click(ActaReunionAgregarEmpleado);
+        $("button#btnActaReunionEmpleadoEliminar").click();
+        
+        ActaReunionConsultarEmpelados();
+        
+        function ActaReunionAgregarEmpleado() {
+
+            $.post("./ajax/home/acta_agregar_empleado.ajax.php", { acta: <?=$_GET["acta"]?>, empleado: $("select#cboEmpleados").val(), responsable: $("input#chkEmpleadoResponsable:checked").val() || false }, function(r){
+                console.log(r);
+                ActaReunionConsultarEmpelados();
+            });
+        }
+        
+        ActaReunionConsultarPuntosTratados();
+        ActaReunionConsultarConclusiones();
+        ActaReunionConsultarAsuntosPendientes();
+        ActaReunionConsultarDocumentacion();
+
+    });
+    
+     function ActaReunionConsultarEmpelados(){
+            $.get("./ajax/home/acta_consultar_empleados.ajax.php",{ acta : <?=$_GET["acta"]?>},function(r){
+                $("table#DatagridActaReunionAsistentes tbody").html(r);
+            });
+        }
+
+    
+    function ActaReunionEmpleadoActualizaResponsabilidad(acta, empleado){
+        $.post("./ajax/home/acta_actualiza_responsabilidad_empleado.ajax.php",{acta:acta, empleado: empleado}, function(r){
+        });
+    }
+    
+    $("#btnActaReunionAgregarPuntoTratado").click(ActaReunionAgregarPuntoTratado);
+    
+    function ActaReunionAgregarPuntoTratado() {
+         var actividad = $("input#txtActaReunionPuntosTratadosActividad").val(),
+            descripcion = $("input#txtActaReunionPuntosTratadosDescripcion").val();
+        $.post("./ajax/home/acta_agregar_punto_tratado.ajax.php",{ acta: <?=$_GET["acta"]?>, actividad: actividad, descripcion: descripcion || ' ' }, function(r){
+            console.log(r);
+            ActaReunionConsultarPuntosTratados();
+            $("input#txtActaReunionPuntosTratadosActividad").val("");
+            $("input#txtActaReunionPuntosTratadosDescripcion").val("");
+        });
+    }
+    
+    function ActaReunionConsultarPuntosTratados(){
+        $.get("./ajax/home/acta_consultar_puntos_tratados.ajax.php", { acta :  <?=$_GET["acta"]?> }, function(r){
+            $("table#DatagridActaReunionPuntosTratados tbody").html(r);
+        });
+    }
+    
+    
+    $("#btnActaReunionAgregarConclusion").click(ActaReunionAgregarConclusion);
+    
+    function ActaReunionAgregarConclusion() {
+         var nombre = $("input#txtActaReunionConclusionNombre").val(),
+            descripcion = $("input#txtActaReunionConclusionDescipcion").val();
+        $.post("./ajax/home/acta_agregar_conclusion.ajax.php",{ acta: <?=$_GET["acta"]?>, nombre: nombre, descripcion: descripcion || ' ' }, function(r){
+            console.log(r);
+            ActaReunionConsultarConclusiones();
+            $("input#txtActaReunionConclusionNombre").val("");
+            $("input#txtActaReunionConclusionDescipcion").val("")
+        });
+    }
+    
+    function ActaReunionConsultarConclusiones(){
+        $.get("./ajax/home/acta_consultar_conclusiones.ajax.php", { acta :  <?=$_GET["acta"]?> }, function(r){
+            $("table#DatagridActaReunionConclusiones tbody").html(r);
+        });
+    }
+    
+    
+    
+    $("#btnActaReunionAgregarAsuntoPendiente").click(ActaReunionAgregarAsuntoPendiente);
+    
+    function ActaReunionAgregarAsuntoPendiente() {
+         var accion = $("input#txtActaReunionAsuntoPendienteAccion").val(),
+            responsable = $("select#cboActaReunionAsuntoPendienteResponsable").val(),
+            plazo    = $("input#txtActaReunionAsuntoPendientePlazo").val();
+        $.post("./ajax/home/acta_agregar_asunto_pendiente.ajax.php",{ acta: <?=$_GET["acta"]?>, accion: accion, responsable: responsable , plazo:plazo }, function(r){
+            console.log(r);
+            ActaReunionConsultarAsuntosPendientes();
+            $("input#txtActaReunionAsuntoPendienteAccion").val("");
+            //$("input#txtActaReunionAsuntoPendienteResponsable").val("");
+            $("input#txtActaReunionAsuntoPendientePlazo").val("");
+            
+        });
+    }
+    
+    function ActaReunionConsultarAsuntosPendientes(){
+        $.get("./ajax/home/acta_consultar_asuntos_pendientes.ajax.php", { acta :  <?=$_GET["acta"]?> }, function(r){
+            $("table#DatagridActaReunionAsuntosPendientes tbody").html(r);
+        });
+    }
+    
+    
+    
+    $("#btnActaReunionAgregarDocumentacion").click(ActaReunionAgregarDocumentacion);
+    
+    function ActaReunionAgregarDocumentacion() {
+         var nombre = $("input#txtActaReunionDocumentacionNombre").val(),
+             entrego = $("input#txtActaReunionDocumentacionEntrego").val(),
+             referencia    = $("input#txtActaReunionDocumentacionReferencia").val();
+        $.post("./ajax/home/acta_agregar_documentacion.ajax.php",{ acta: <?=$_GET["acta"]?>, nombre: nombre, entrego: entrego , referencia:referencia }, function(r){
+            console.log(r);
+            ActaReunionConsultarDocumentacion();
+            $("input#txtActaReunionDocumentacionNombre").val("");
+            $("input#txtActaReunionDocumentacionEntrego").val("");
+            $("input#txtActaReunionDocumentacionReferencia").val("");
+            
+        });
+    }
+    
+    function ActaReunionConsultarDocumentacion(){
+        $.get("./ajax/home/acta_consultar_documentacion.ajax.php", { acta :  <?=$_GET["acta"]?> }, function(r){
+            $("table#DatagridActaReunionDocumentacion tbody").html(r);
+        });
+    }
+</script>

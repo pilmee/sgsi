@@ -1,0 +1,266 @@
+<?php
+    $objetivo = $_GET["objetivo"];
+    $data = $objObjetivo->AbrirObjetivo($objetivo);
+    $reg_obj = $data->fetchObject();
+?>
+<div class="btn-group btn-group-sm" style="display: block; overflow: hidden; margin-bottom: 1em; border-bottom: 1px solid #ccc; padding-bottom: 1em;">
+    <button id="btnObjetivoEditarAtras" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Volver Atras</button>
+    <button id="btnObjetivoEditarActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+    <button id="btnObjetivoEditarDescargar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> Descargar</button>
+</div>
+<div style="display: block; overflow: hidden">
+    <form id="frmObjetivo" class="form-horizontal" role="form" method="post" action="objetivo_actualizar.ajax.php">
+        <input type="hidden" name="txtIdObjetivo" value="<?=$reg_obj->idobjetivo?>" />
+        
+        <div class="form-group">
+            <label for="txtObjetivo" class="col-lg-2 control-label">Objetivo</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtObjetivo" name="txtObjetivo" placeholder="Objetivo" value="<?=$reg_obj->objetivo?>" required >
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="txtFecha" class="col-lg-2 control-label">Fecha</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtFecha" name="txtFecha" placeholder="Fecha" value="<?=$reg_obj->fecha?>" required style="width:300px">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="cboResponsable" class="col-lg-2 control-label">Responsable</label>
+            <div class="col-lg-10">
+                <select class="form-control input-sm" id="cboResponsable" name="cboResponsable">
+                    <option></option>
+                    <?php
+                        $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                        while($reg2 = $query_empleado->fetchObject()){
+                            echo '<option value="'.$reg2->idempleado.'"';
+                                if($reg_obj->idempleado == $reg2->idempleado){ echo ' selected '; }
+                            echo '>'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                        }
+                    ?>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="txtDescripcion" class="col-lg-2 control-label">Descripción</label>
+            <div class="col-lg-10">
+                <textarea class="form-control input-sm" id="txtDescripcion" name="txtDescripcion" placeholder="Descripcion" ><?=$reg_obj->descripcion?></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="cboObjetivoAreasAfectadas" class="col-lg-2 control-label">Áreas afectadas</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-9" >
+                        <select id="cboObjetivoAreasAfectadas" name="cboObjetivoAreasAfectadas" class="form-control input-sm">
+                            <option></option>
+                            <?php
+                                $query_area = $objArea->ConsultarAreas($_SESSION["empresa"]);
+                                while($reg2 = $query_area->fetchObject()){
+                                    echo '<option value="'.$reg2->idarea.'">'.$reg2->nombre.'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-lg-3" style="padding:0;">
+                        <div class="btn-group btn-group-sm">
+                            <button id="btnObjetivoAreasAfectadasAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridObjetivoAreasAfectadas" class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Área Afectada</th>
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="dataObjetivosEspecificos" class="col-lg-2 control-label">Objetivos Escpecificos</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-3" style="padding-right: 0.2em;">
+                        <input id="txtObjetivoEspecificoNombre" name="txtObjetivoEspecificoNombre" placeholder="Nombre" value="" class="form-control input-sm" />
+                    </div>
+                    <div  class="col-lg-3" style="padding-right: 0.2em; padding-left: 0;">
+                        <input id="txtObjetivoEspecificoDescripcion" name="txtObjetivoEspecificoDescripcion" placeholder="Descripcion" value="" class="form-control input-sm" />
+                    </div>
+                    <div  class="col-lg-3" style="padding-left: 0; padding-right: 0.2em;">
+                        <select class="form-control input-sm" id="cboObjetivoEspecificoResponsable" name="cboObjetivoEspecificoResponsable">
+                            <option></option>
+                            <?php
+                                $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                                while($reg2 = $query_empleado->fetchObject()){
+                                    echo '<option value="'.$reg2->idempleado.'"';
+                                        if($reg_obj->idempleado == $reg2->idempleado){ echo ' selected '; }
+                                    echo '>'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div  class="col-lg-3" style="padding-left: 0;">
+                        <div class="input-group">
+                            <input id="txtObjetivoEspecificoRescurso" name="txtObjetivoEspecificoRescurso" placeholder="Recurso" value="" class="form-control input-sm"  />
+                            <span class="input-group-btn">
+                                <button id="btnObjetivoEspecificoAgregar" class="btn btn-default btn-sm" type="button"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridObjetivosEspecificos" class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Responsable</th>
+                                <th>Recursos</th>
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="txtObjetivoDocumentosFile" class="col-lg-2 control-label">Documentos</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div class="col-lg-3" style="padding-right:0;">
+                        <input type="file" name="txtObjetivoDocumentosFile" id="txtObjetivoDocumentosFile" class="form-control input-sm" />
+                    </div>
+                    <div class="col-lg-7">
+                        <input type="text" name="txtObjetivoDocumentosText" id="txtObjetivoDocumentosText" class="form-control input-sm" placeholder="Detalle" />
+                    </div>
+                    <div class="col-lg-2" style="padding:0;">
+                        <div class="btn-group btn-group-sm">
+                            <button id="btnObjetivoDocumentosFileAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridObjetivoDocumentos" class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Documentos</th>
+                                <th style="width:80px;">Extensión</th>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+
+
+
+<script>
+    /** AUTOLOADS **/
+    ObjetivoAreasAfectadasConsultar();
+    ObjetivoEspecificoConsultar();
+    ObjetivoDocumentosFileConsultar();
+    
+    /** EVENTOS **/
+    
+    $("button#btnObjetivoAreasAfectadasAgregar").click(ObjetivoAreasAfectadasAgregar);
+    $("button#btnObjetivoEspecificoAgregar").click(ObjetivoEspecificoAgregar);
+    $("button#btnObjetivoDocumentosFileAgregar").click(ObjetivoDocumentosFileAgregar);
+    
+    $("button#btnObjetivoEditarActualizar").click(function(){
+        $("form#frmObjetivo").submit();
+    });
+    
+    $("form#frmObjetivo").submit(function(e){
+        e.preventDefault();
+        var formData = new FormData($(this)[0]);
+        
+        console.log(formData);
+        $.ajax({
+            url: "./ajax/inicio/"+$(this).attr("action"),
+            type: 'POST',
+            data: formData,
+            async: false,
+            success: function (data) {
+                alert(data)
+                ObjetivoDocumentosFileConsultar();
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+    
+    /** FUNCIONES **/
+    function ObjetivoDocumentosFileAgregar() {
+        $("form#frmObjetivo").submit();
+        ObjetivoDocumentosFileConsultar();
+    }
+    function ObjetivoDocumentosFileConsultar() {
+        $.get("./ajax/inicio/objetivo_documento_consultar.ajax.php", { objetivo:<?=$_GET["objetivo"]?> }, function(r){
+            $("table#DatagridObjetivoDocumentos tbody").html(r);
+        });
+    }
+    
+    
+    function ObjetivoEspecificoAgregar() {
+        var nombre      = $("input#txtObjetivoEspecificoNombre").val(),
+            descripcion = $("input#txtObjetivoEspecificoDescripcion").val(),
+            empleado    = $("select#cboObjetivoEspecificoResponsable").val(),
+            recurso     = $("input#txtObjetivoEspecificoRescurso").val();
+        
+        $.post("./ajax/inicio/objetivo_objetivo_especifico_agregar.ajax.php", { objetivo: <?=$_GET["objetivo"]?>,nombre:nombre,descripcion:descripcion,empleado:empleado,recurso:recurso }, function(r){
+            console.log(r);
+            ObjetivoEspecificoConsultar();
+        });
+    }
+    function ObjetivoEspecificoConsultar() {
+        $.get("./ajax/inicio/objetivo_objetivo_especifico_consultar.ajax.php", { objetivo: <?=$_GET["objetivo"]?> }, function(r){
+            $("table#DatagridObjetivosEspecificos tbody").html(r);
+        });
+    }
+    
+    
+    function ObjetivoAreasAfectadasAgregar(){
+        var area = $("select#cboObjetivoAreasAfectadas").val();
+        $.post("./ajax/inicio/objetivo_area_afectada_agregar.ajax.php", { objetivo: <?=$_GET["objetivo"]?>, area:area }, function(r){
+            $("table#DatagridObjetivoAreasAfectadas tbody").html(r);
+            ObjetivoAreasAfectadasConsultar();
+        });
+    }
+    
+    function ObjetivoAreasAfectadasConsultar(){
+        $.get("./ajax/inicio/objetivo_area_afectada_consultar.ajax.php", { objetivo: <?=$_GET["objetivo"]?> }, function(r){
+            $("table#DatagridObjetivoAreasAfectadas tbody").html(r);
+        });
+    }
+    
+    
+    $("button#btnObjetivoEditarAtras").click(function(){ history.back(); });
+</script>

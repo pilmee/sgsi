@@ -1,0 +1,544 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Inicio y Alcance</h3>
+    </div>
+    <div class="panel-body">
+        <div>
+            <form id="frmInicioAlcance" class="form-horizontal" role="form" method="post" action="inicio_alcance_nuevo.ajax.php" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="cboActaReunion" class="col-lg-2 control-label">Acta Reunión</label>
+                    <div class="col-lg-10">
+                        <select class="form-control input-sm" id="cboActaReunion" name="cboActaReunion" required>
+                            <option value="">-- Seleccione un acta reunion --</option>
+                            <?php
+                                $query_acta_reunion = $objActaReunion->ConsultarActas();
+                                while($reg = $query_acta_reunion->fetchObject()){
+                                    echo '<option value="'.$reg->idacta_reunion.'"';
+                                    if(isset($_GET["acta"]) && !empty($_GET["acta"]) && is_numeric($_GET["acta"])){
+                                        if($reg->idacta_reunion == $_GET["acta"]){ echo " selected "; }
+                                    }
+                                    echo '>'.$reg->asunto.'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <?php if($full_pag){ ?>
+                <?php
+                    $acta = $_GET["acta"];
+                    $query_inicio_alcance = $objInicioAlcance->AbrirInicioAlcance($acta);
+                    $reg = $query_inicio_alcance->fetchObject();
+                    //var_dump($reg);
+                ?>
+                <hr />
+                <div style="border-bottom:1px solid #ccc; margin-bottom: 1em; padding-bottom: 1em;">
+                    <div class="btn-group btn-group-sm" >                
+                        <button id="btnActaActualizar" type="submit" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+                    </div>
+                </div>
+                
+                <div id="contenedorInicioAlcance">
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceNombre" class="col-lg-2 control-label">Nombre</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control input-sm" id="txtInicioAlcanceNombre" name="txtInicioAlcanceNombre" value="<?=$reg->nombre?>" placeholder="Nombre" required />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceAlcance" class="col-lg-2 control-label">Alcance</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control input-sm" id="txtInicioAlcanceAlcance" name="txtInicioAlcanceAlcance" value="<?=$reg->alcance?>" placeholder="Alcance"  />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceDescripcion" class="col-lg-2 control-label">Descripcion</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control input-sm" id="txtInicioAlcanceDescripcion" name="txtInicioAlcanceDescripcion" value="<?=$reg->descripcion?>" placeholder="Descripcion" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cboInicioAlcanceSG" class="col-lg-2 control-label">SG</label>
+                        <div class="col-lg-10">
+                            <select class="form-control input-sm" id="cboInicioAlcanceSG" name="cboInicioAlcanceSG">
+                                <option></option>
+                            <?php
+                                $query_sg = $objSG->ConsultarSG();
+                                while($reg2 = $query_sg->fetchObject()){
+                                    echo '<option value="'.$reg2->idsg.'"';
+                                    if($reg2->idsg == $reg->idsg){ echo " selected "; }
+                                    echo '>'.$reg2->nombre.'</option>';
+                                }
+                            ?>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cboInicioAlcanceCargos" class="col-lg-2 control-label">Comité</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <select name="cboInicioAlcanceCargos" id="cboInicioAlcanceCargos" class="form-control input-sm">
+                                    <?php
+                                        $query_cargos = $objCargo->ConsultarCargos($_SESSION["empresa"]);
+                                        while($reg2 = $query_cargos->fetchObject()){
+                                            echo '<option value="'.$reg2->idcargo.'">'.$reg2->nombre.'</option>';
+                                        }
+                                    ?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6" style="padding:0;">
+                                    <div class="btn-group btn-group-sm">
+                                        <button id="btnInicioAlcanceComiteAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="DatagridInicioAlcanceComite" class="table table-condensed table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">N</th>
+                                            <th>Cargos</th>
+                                            <th style="width:100px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cboInicioAlcanceResponsable" class="col-lg-2 control-label">Responsable del SG</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <select name="cboInicioAlcanceResponsable" id="cboInicioAlcanceResponsable" class="form-control input-sm">
+                                    <?php
+                                    $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                                    while($reg2 = $query_empleado->fetchObject()){
+                                        echo '<option value="'.$reg2->idempleado.'">'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                                    }
+                                    ?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6" style="padding:0;">
+                                    <div class="btn-group btn-group-sm">
+                                        <button id="btnInicioAlcanceResponsableAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="DatagridInicioAlcanceResponsable" class="table table-condensed table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">N</th>
+                                            <th>Apellidos y Nombres (Empleado)</th>
+                                            <th style="width:100px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cboActaReunion" class="col-lg-2 control-label">Departamentos</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <select name="cboInicioAlcanceDepartamentos" id="cboInicioAlcanceDepartamentos" class="form-control input-sm">
+                                    <?php
+                                        $query_departamentos = $objDepartamento->ConsultarDepartamentos($_SESSION["empresa"]);
+                                        while($reg2 = $query_departamentos->fetchObject()){
+                                            echo '<option value="'.$reg2->iddepartamento.'">'.$reg2->nombre.'</option>';
+                                        }
+                                    ?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6" style="padding:0;">
+                                    <div class="btn-group btn-group-sm">
+                                        <button id="btnInicioAlcanceDepartamentoAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="DatagridInicioAlcanceDepartamento" class="table table-condensed table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">N</th>
+                                            <th>Detalle</th>
+                                            <th style="width:100px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceUbicacionOrganigrama" class="col-lg-2 control-label">Ubicación del Organigrama</label>
+                        <div class="col-lg-10">
+                            <input type="text" name="txtInicioAlcanceUbicacionOrganigrama" id="txtInicioAlcanceUbicacionOrganigrama" value="<?=$reg->ubicacion_organigrama?>" class="form-control input-sm" />                         
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceOrganigramaFile" class="col-lg-2 control-label">Organigrama</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-3" style="padding-right:0;">
+                                    <input type="file" name="txtInicioAlcanceOrganigramaFile" id="txtInicioAlcanceOrganigramaFile" class="form-control input-sm" />
+                                </div>
+                                <div class="col-lg-7">
+                                    <input type="text" name="txtInicioAlcanceOrganigramaText" id="txtInicioAlcanceOrganigramaText" class="form-control input-sm" placeholder="Detalle" />
+                                </div>
+                                <div class="col-lg-2" style="padding:0;">
+                                    <div class="btn-group btn-group-sm">
+                                        <button id="btnInicioAlcanceOrganigramaAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="DatagridInicioAlcanceOrganigrama" class="table table-condensed table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">N</th>
+                                            <th>Archivo</th>
+                                            <th style="width:80px;">Extensión</th>
+                                            <th>Fecha</th>
+                                            <th>Descripción</th>
+                                            <th style="width:100px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cboInicioAlcanceLocalizacionFisica" class="col-lg-2 control-label">Localizaciones Físicas</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div  class="col-lg-9" >
+                                    <select id="cboInicioAlcanceLocalizacionFisica" name="cboInicioAlcanceLocalizacionFisica" class="form-control input-sm">
+                                    <option></option>
+                                    <?php
+                                    $query_area = $objArea->ConsultarAreas($_SESSION["empresa"]);
+                                    while($reg2 = $query_area->fetchObject()){
+                                        echo '<option value="'.$reg2->idarea.'">'.$reg2->nombre.'</option>';
+                                    }
+                                    ?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3" style="padding:0;">
+                                    <div class="btn-group btn-group-sm">
+                                        <button id="btnInicioAlcanceLocalizacionFisicaAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="DatagridInicioAlcanceLocalizacionFisica" class="table table-condensed table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">N</th>
+                                            <th>Area (localización)</th>
+                                            <th style="width:100px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cboInicioAlcanceInterface" class="col-lg-2 control-label">Interfaces</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div  class="col-lg-9" >
+                                    <select id="cboInicioAlcanceInterface" name="cboInicioAlcanceInterface" class="form-control input-sm">
+                                    <?php
+                                        $query_cargos2 = $objCargo->ConsultarCargos($_SESSION["empresa"]);
+                                        while($reg2 = $query_cargos2->fetchObject()){
+                                            echo '<option value="'.$reg2->idcargo.'">'.$reg2->nombre.'</option>';
+                                        }
+                                    ?>
+                                    </select>
+                                </div>
+                                <div class="col-lg-3" style="padding:0;">
+                                    <div class="btn-group btn-group-sm">
+                                        <button id="btnInicioAlcanceInterfaceAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="DatagridInicioAlcanceInterface" class="table table-condensed table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">N</th>
+                                            <th>Area (localización)</th>
+                                            <th style="width:100px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceExclusion" class="col-lg-2 control-label">Exclusiones en el Alcance</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control input-sm" id="txtInicioAlcanceExclusion" name="txtInicioAlcanceExclusion" value="<?=$reg->exclusion?>" placeholder="Exclusion" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceUbicacionDiagrama" class="col-lg-2 control-label">Ubicación del Diagrama</label>
+                        <div class="col-lg-10">
+                            <input type="text" class="form-control input-sm" id="txtInicioAlcanceUbicacionDiagrama" name="txtInicioAlcanceUbicacionDiagrama" value="<?=$reg->ubicacion_diagrama?>" placeholder="Ubicacion del diagrama" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="txtInicioAlcanceDiagramaFile" class="col-lg-2 control-label">Diagrama</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-3" style="padding-right:0;">
+                                    <input type="file" name="txtInicioAlcanceDiagramaFile" id="txtInicioAlcanceDiagramaFile" class="form-control input-sm" />
+                                </div>
+                                <div class="col-lg-7">
+                                    <input type="text" name="txtInicioAlcanceDiagramaText" id="txtInicioAlcanceDiagramaText" class="form-control input-sm" placeholder="Detalle" />
+                                </div>
+                                <div class="col-lg-2" style="padding:0;">
+                                    <div class="btn-group btn-group-sm">
+                                        <button id="btnInicioAlcanceDiagramaFileAgregar" type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <table id="DatagridInicioAlcanceDiagrama" class="table table-condensed table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:80px;">N</th>
+                                            <th>Archivo</th>
+                                            <th style="width:80px;">Extensión</th>
+                                            <th>Fecha</th>
+                                            <th>Descripción</th>
+                                            <th style="width:100px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php }else{ $acta = 0; } ?>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    /** AUTOLOAD **/
+    InicioAlcanceConsultarComite();
+    InicioAlcanceConsultarResponsable();
+    InicioAlcanceConsultarDepartamento();
+    InicioAlcanceConsultarLocalizacionFisica();
+    InicioAlcanceConsultarInterface();
+    InicioAlcanceConsultarOrganigramas();
+    InicioAlcanceConsultarDiagramas();
+    
+    /** EVENTOS **/
+    $("button#btnInicioAlcanceDiagramaFileAgregar, button#btnInicioAlcanceOrganigramaAgregar").click(function(){
+         $("form#frmInicioAlcance").submit();
+         document.location.reload();
+        /*
+        $.ajax({
+            contentType: 'multipart/form-data',
+            url: './ajax/inicio/inicio_alcance_diagrama_upload.ajax.php',
+            data: { archivo:$("input#txtInicioAlcanceDiagramaFile").val(), detalle: $("input#txtInicioAlcanceDiagramaText").val() },
+            type : 'POST',
+            success: function(data){
+                alert(data);
+            }
+            
+        });
+        */
+    });
+    
+    
+    $("form#frmInicioAlcance").submit(function(e){
+        e.preventDefault();
+        
+        var formData = new FormData($(this)[0]);
+        //console.log(formData);
+        /*
+        $(this).each(function(){
+            var d = $(this);
+            for (var i = 0; i < (d.find('input[type=file]').length); i++) { 
+                formData.append((d.find('input[type="file"]').eq(i).attr("name")),((d.find('input[type="file"]:eq('+i+')')[0]).files[0]));             
+            } 
+                     
+            for (var i = 0; i < (d.find('input').not('input[type=file]').not('input[type=submit]').length); i++) {  
+                // buscará todos los input menos el valor "file" y "sumbit . Serán diferenciados en el PHP gracias al "name" de cada uno. 
+                formData.append( (d.find('input').not('input[type=file]').not('input[type=submit]').eq(i).attr("name")),(d.find('input').not('input[type=file]').not('input[type=submit]').eq(i).val()) );             
+            } 
+            
+        });
+        */
+        
+        $.ajax({
+            url: "./ajax/inicio/"+$(this).attr("action"),
+            type: 'POST',
+            data: formData,
+            async: false,
+            success: function (data) {
+                alert(data)
+                InicioAlcanceConsultarOrganigramas();
+                InicioAlcanceConsultarDiagramas();
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        /*
+        $.post("./ajax/inicio/"+$(this).attr("action"), $(this).serialize(), function(r){
+            alert(r);
+        });
+        */
+    });
+    
+    function InicioAlcanceConsultarOrganigramas() {
+        $.get("./ajax/inicio/inicio_alcance_archivo_consultar.ajax.php", { archivo: "organigrama",acta: <?=$acta?> }, function(r){
+            $("table#DatagridInicioAlcanceOrganigrama tbody").html(r);
+        });
+    }
+    function InicioAlcanceConsultarDiagramas() {
+        $.get("./ajax/inicio/inicio_alcance_archivo_consultar.ajax.php", { archivo: "diagrama",acta: <?=$acta?> }, function(r){
+            $("table#DatagridInicioAlcanceDiagrama tbody").html(r);
+        });
+    }
+    
+    
+    $("button#btnInicioAlcanceInterfaceAgregar").click(InicioAlcanceAgregarInterface);
+    
+    function InicioAlcanceAgregarInterface() {
+        var cargo = $("select#cboInicioAlcanceInterface").val();
+        
+        $.post("./ajax/inicio/inicio_alcance_interface_agregar.ajax.php", { acta: <?=$acta?>, cargo : cargo }, function(r){
+            console.log(r);
+            InicioAlcanceConsultarInterface();
+        });
+    }
+    
+    function InicioAlcanceConsultarInterface() {
+        $.get("./ajax/inicio/inicio_alcance_interface_consultar.ajax.php", { acta: <?=$acta?> }, function(r){
+            $("table#DatagridInicioAlcanceInterface tbody").html(r);
+        });
+    }
+    
+    
+    $("button#btnInicioAlcanceLocalizacionFisicaAgregar").click(InicioAlcanceAgregarLocalizacionFisica);
+    
+    function InicioAlcanceAgregarLocalizacionFisica() {
+        var area = $("select#cboInicioAlcanceLocalizacionFisica").val();
+        
+        $.post("./ajax/inicio/inicio_alcance_localizacion_fisica_agregar.ajax.php", { acta: <?=$acta?>, area : area }, function(r){
+            console.log(r);
+            InicioAlcanceConsultarLocalizacionFisica();
+        });
+    }
+    
+    function InicioAlcanceConsultarLocalizacionFisica() {
+        $.get("./ajax/inicio/inicio_alcance_localizacion_fisica_consultar.ajax.php", { acta: <?=$acta?> }, function(r){
+            $("table#DatagridInicioAlcanceLocalizacionFisica tbody").html(r);
+        });
+    }
+    
+    
+    $("button#btnInicioAlcanceDepartamentoAgregar").click(InicioAlcanceAgregarDepartamento);
+    
+    function InicioAlcanceAgregarDepartamento() {
+        var departamento = $("select#cboInicioAlcanceDepartamentos").val();
+        
+        $.post("./ajax/inicio/inicio_alcance_departamento_agregar.ajax.php", { acta: <?=$acta?>, departamento : departamento }, function(r){
+            console.log(r);
+            InicioAlcanceConsultarDepartamento();
+        });
+    }
+    
+    function InicioAlcanceConsultarDepartamento() {
+        $.get("./ajax/inicio/inicio_alcance_departamento_consultar.ajax.php", { acta: <?=$acta?> }, function(r){
+            $("table#DatagridInicioAlcanceDepartamento tbody").html(r);
+        });
+    }
+    
+    
+    $("button#btnInicioAlcanceResponsableAgregar").click(InicioAlcanceAgregarResponsable);
+    
+    function InicioAlcanceAgregarResponsable() {
+        var empleado = $("select#cboInicioAlcanceResponsable").val();
+        
+        $.post("./ajax/inicio/inicio_alcance_responsable_agregar.ajax.php", { acta: <?=$acta?>, empleado : empleado }, function(r){
+            console.log(r);
+            InicioAlcanceConsultarResponsable();
+        });
+    }
+    
+    function InicioAlcanceConsultarResponsable() {
+        $.get("./ajax/inicio/inicio_alcance_responsable_consultar.ajax.php", { acta: <?=$acta?> }, function(r){
+            $("table#DatagridInicioAlcanceResponsable tbody").html(r);
+        });
+    }
+    
+    
+    $("button#btnInicioAlcanceComiteAgregar").click(InicioAlcanceAgregarComite);
+    
+    function InicioAlcanceAgregarComite() {
+        var cargo = $("select#cboInicioAlcanceCargos").val();
+        
+        $.post("./ajax/inicio/inicio_alcance_comite_agregar.ajax.php", { acta: <?=$acta?>, cargo : cargo }, function(r){
+            console.log(r);
+            InicioAlcanceConsultarComite();
+        });
+    }
+    
+    function InicioAlcanceConsultarComite() {
+        $.get("./ajax/inicio/inicio_alcance_comite_consultar.ajax.php", { acta: <?=$acta?> }, function(r){
+            $("table#DatagridInicioAlcanceComite tbody").html(r);
+        });
+    }
+    
+    $("select#cboActaReunion").change(function(){
+        if($(this).val() != ""){
+            var acta_reunion = $(this).val();
+            $.post("./ajax/inicio/inicio_alcance_crear.ajax.php", { acta: acta_reunion }, function(r){
+                console.log(r);                
+            });
+            location.href = "inicio?pag=<?=$_GET['pag']?>&acta="+acta_reunion;
+        }  
+    });
+</script>

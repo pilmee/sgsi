@@ -1,0 +1,223 @@
+<?php
+    $tarea = $_GET["tarea"];
+    $data = $objProyecto->AbrirTarea($tarea);
+    $reg = $data->fetchObject();
+?>
+<div class="btn-group btn-group-sm" style="display: block; overflow: hidden; margin-bottom: 1em; border-bottom: 1px solid #ccc; padding-bottom: 1em;">
+    <button id="btnProyectoTareaEditarAtras" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Volver Atras</button>
+    <button id="btnProyectoTareaEditarActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+</div>
+
+<div style="display: block; overflow: hidden">
+    <form id="frmProyectoTarea" class="form-horizontal" role="form" method="post" action="proyecto_tarea_actualizar.ajax.php">
+        <input type="hidden" name="txtIdTarea" value="<?=$reg->idtarea?>" />
+        
+        <div class="form-group">
+            <label for="txtTarea" class="col-lg-2 control-label">Tarea</label>
+            <div class="col-lg-10">
+                <input type="text" class="form-control input-sm" id="txtTarea" name="txtTarea" placeholder="Tarea" value="<?=$reg->detalle?>" required >
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="chkCompletado" class="col-lg-2 control-label">Completado</label>
+            <div class="col-lg-10" style="text-align:left;">
+                <input type="checkbox" id="chkCompletado" name="chkCompletado" value="1" <?php if($reg->completado){ echo "checked"; } ?> style="margin-top:10px" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtDescripcion" class="col-lg-2 control-label">Descripcion</label>
+            <div class="col-lg-10">
+                <textarea class="form-control input-sm" id="txtDescripcion" name="txtDescripcion" placeholder="Descripcion"><?=$reg->descripcion?></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtFechaInicio" class="col-lg-2 control-label">Fecha Inicio</label>
+            <div class="col-lg-10">
+                <input type="date" class="form-control input-sm" id="txtFechaInicio" name="txtFechaInicio" value="<?=$reg->inicio?>" style="width:200px">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="txtFechaFin" class="col-lg-2 control-label">Fecha Fin</label>
+            <div class="col-lg-10">
+                <input type="date" class="form-control input-sm" id="txtFechaFin" name="txtFechaFin" value="<?=$reg->fin?>" style="width:200px">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboResponsable" class="col-lg-2 control-label">Responsables</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-9" style="padding-right: 0.2em;">
+                        <select class="form-control input-sm" id="cboResponsable" name="cboResponsable">
+                            <option></option>
+                            <?php
+                                $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                                while($reg2 = $query_empleado->fetchObject()){
+                                    echo '<option value="'.$reg2->idempleado.'">'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                                }
+                            ?>
+                        </select>
+                    </div>
+                    <div  class="col-lg-3" style="padding-left: 0;">                        
+                            <button id="btnTareaResponsableAgregar" class="btn btn-default btn-sm" type="button"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridProyectoTareaResponsable" class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Nombre</th>
+                                <th>Cargo</th>
+                                <th>Empresa</th>                                
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+       	<div class="form-group">
+            <label for="cboResponsable" class="col-lg-2 control-label">Documentación de la Empresa</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-9" style="padding-right: 0.2em;">
+                        <input type="text" class="form-control input-sm" id="txtDocumentacionEmpresa" name="txtDocumentacionEmpresa" placeholder="Documentacion de la Empresa" >
+                    </div>
+                    <div  class="col-lg-3" style="padding-left: 0;">                        
+                            <button id="btnTareaDocumentoEmpresaAgregar" class="btn btn-default btn-sm" type="button"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridProyectoDocumentoEmpresa" class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Documento de la Empresa</th>                         
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="cboResponsable" class="col-lg-2 control-label">Documentación asociada a la consultoria</label>
+            <div class="col-lg-10">
+                <div class="row">
+                    <div  class="col-lg-9" style="padding-right: 0.2em;">
+                        <input type="text" class="form-control input-sm" id="txtDocumentacionConsultora" name="txtDocumentacionConsultora" placeholder="Documentacion de la Consultora" >
+                    </div>
+                    <div  class="col-lg-3" style="padding-left: 0;">                        
+                            <button id="btnTareaDocumentoConsultoraAgregar" class="btn btn-default btn-sm" type="button"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                    </div>
+                </div>
+                <div>
+                    <table id="DatagridProyectoDocumentoConsultora" class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:80px;">N</th>
+                                <th>Documento de la Consultora</th>                         
+                                <th style="width:100px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                      
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+	/*** AUTOLOADS ***/
+	TareaConsultarResponsables();
+	TareaConsultarDocumentacionEmpresa();
+	TareaConsultarDocumentacionConsultora();
+
+
+	/*** EVENTOS ***/
+
+	$("button#btnProyectoTareaEditarAtras").click(function(){ history.back(); });
+	$("button#btnTareaResponsableAgregar").click(tareaResponsableAgregar);
+	$("button#btnTareaDocumentoEmpresaAgregar").click(tareaDocumentoEmpresaAgregar);
+	$("button#btnTareaDocumentoConsultoraAgregar").click(tareaDocumentoConsultoraAgregar);
+
+	$("button#btnProyectoTareaEditarActualizar").click(function(){
+        $("form#frmProyectoTarea").submit();
+    });
+	/*** FUNCIONES ***/
+
+	$("form#frmProyectoTarea").submit(function(e){
+        e.preventDefault();
+  		var formData = new FormData($(this)[0]);
+  		
+        $.ajax({
+            url: "./ajax/inicio/"+$(this).attr("action"),
+            type: 'POST',
+            data: formData,
+            async: false,
+            success: function (data) {
+                alert(data);
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+
+	function tareaResponsableAgregar(){
+		var data = { empleado: $("select#cboResponsable").val(), tarea: <?=$tarea?> };
+		$.post("./ajax/inicio/proyecto_tarea_responsables_agregar.ajax.php",data, function(r){
+			$("table#DatagridProyectoTareaResponsable tbody").html(r);
+			TareaConsultarResponsables();
+		});
+	};
+	function tareaDocumentoEmpresaAgregar(){
+		var data = { tarea: <?=$tarea?>, documento: $("input#txtDocumentacionEmpresa").val() };
+		$.post("./ajax/inicio/proyecto_tarea_docempresa_agregar.ajax.php",data, function(r){
+			$("table#DatagridProyectoDocumentoEmpresa tbody").html(r);
+			TareaConsultarDocumentacionEmpresa();
+		});
+	};
+	function tareaDocumentoConsultoraAgregar(){
+		var data = { tarea: <?=$tarea?>, documento: $("input#txtDocumentacionConsultora").val() };
+		$.post("./ajax/inicio/proyecto_tarea_docconsultora_agregar.ajax.php",data, function(r){
+			$("table#DatagridProyectoDocumentoConsultora tbody").html(r);
+			TareaConsultarDocumentacionConsultora();
+		});
+	};
+
+	function TareaConsultarResponsables(){
+		$.get("./ajax/inicio/proyecto_tarea_responsables_consultar.ajax.php", { tarea: <?=$tarea?> }, function(r){
+			$("table#DatagridProyectoTareaResponsable tbody").html(r);
+		});
+	};	
+
+	function TareaConsultarDocumentacionEmpresa(){
+		$.get("./ajax/inicio/proyecto_tarea_docempresa_consultar.ajax.php", { tarea: <?=$tarea?> }, function(r){
+			$("table#DatagridProyectoDocumentoEmpresa tbody").html(r);
+		});
+	};
+
+	function TareaConsultarDocumentacionConsultora(){
+		$.get("./ajax/inicio/proyecto_tarea_docconsultora_consultar.ajax.php", { tarea: <?=$tarea?> }, function(r){
+			$("table#DatagridProyectoDocumentoConsultora tbody").html(r);
+		});
+	};
+
+</script>

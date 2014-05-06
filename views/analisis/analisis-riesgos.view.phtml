@@ -1,0 +1,470 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Análisis de Riesgos</h3>
+    </div>
+    <div class="panel-body">
+	    <div>
+	    <div style="border-bottom:1px solid #ccc; margin-bottom: 1em; padding-bottom: 1em;">
+	    <?php if(!(isset($_GET["activo"]) && !empty($_GET["activo"]) && is_numeric($_GET["activo"]))){ ?>	    	
+	    		<div class="btn-group">
+				  <button type="button" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-sort"></span> Ordenar por ...</button>
+				  <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+				    <span class="caret"></span>
+				    <span class="sr-only"></span>
+				  </button>
+				  <ul class="dropdown-menu" role="menu">
+				    <li><a href="#" id="btnOrdenarPorNinguna">Ninguna</a></li>
+				    <li><a href="#" id="btnOrdenarConfidencialidad">Confidencialidad</a></li>
+				    <li><a href="#" id="btnOrdenarPorIntegridad">Integridad</a></li>
+				    <li><a href="#" id="btnOrdenarPorDisponibilidad">Disponibilidad</a></li>
+				    <li><a href="#" id="btnOrdenarPorImportancia">Importancia</a></li>
+				    
+				  </ul>
+				</div>
+			<?php }else { ?>
+				<div class="btn-group btn-group-sm">
+	                <button id="btnAmenazaAtras" type="button" class="btn btn-default"><span class="glyphicon glyphicon-arrow-left"></span> Atras</button>
+	                <button id="btnAmenazaNueva" type="button" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Nueva Amenaza</button>
+	                <button id="btnAmenazaActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Actualizar Amenazas</button>
+	                <button id="btnAmenazaEliminar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Eliminar</button>
+	                <button id="btnAmenazaDescargar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> Descargar</button>
+            	</div>
+
+            	<button id="btnAmenazaRecuperar" type="button" class="btn btn-primary btn-sm">
+            		<span class="glyphicon glyphicon-eye-open "></span> 
+            		Recuperar Amenazas
+            	</button>
+			<?php } ?>
+	        </div>	
+	    </div>
+	    <?php if(!(isset($_GET["activo"]) && !empty($_GET["activo"]) && is_numeric($_GET["activo"]))){ ?>	    	
+    	<div id="contenedorDatagridActivos">
+    	<?php
+    		$pag = $_GET["pag"];	
+    		$data = '<table class="table table-condensed table-hover" style="font-size:0.9em"><thead><th>#</th><th>Activo</th><th class="center">Categoria</th><th class="center">% Completado</th><th class="center">Propuestas</th></thead><tbody>';
+    			
+	    			$query_activos = $objActivo->ConsultarActivos();
+	    			$i = 1;
+    				while($reg = $query_activos->fetchObject()){
+    					
+    					$activo = $reg->idactivo;
+    					$data .= "<tr><td>$i</td><td><a href='?pag=$pag&activo=$activo'>".$reg->activo."</a></td><td class='center'>".$reg->categoria."</td><td clas='center'></td><td clas='center'></td></tr>";
+    					$i++;
+    				}
+    			
+    	$data .= '</tbody></table>';
+    	echo $data;
+    	?>
+    	</div>
+    	<?php }else{ ?>
+    	<div id="contenedorDataGridAmenazas">
+    		<table id="datagridAmenazas" class="table table-condensed table-hover" style="font-size:0.9em">
+    			<thead>
+    				<th></th>
+    				<th>#</th>
+    				<th>Amenaza</th>
+    				<th>Vulnerabilidad</th>
+    				<th>Comentario</th>
+    				<th>Probabilidad</th>
+    				<th>Impacto</th>
+    				<th>Riesgo</th>
+    				<th></th>
+    			</thead>
+    			<tbody>
+    				
+    			</tbody>
+    		</table>
+    	</div>
+
+    	<div id="detalleAmenaza" class="well" style="background:none">
+            <ul id="amenazasDetalleTab" class="nav nav-tabs">
+                <li class="active"><a href="#detalleAmenazaAnalisis">Análisis</a></li>
+                <li><a href="#detalleAmenazaControles">Controles</a></li>
+            </ul>
+            
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade active in" id="detalleAmenazaAnalisis" style="margin:1em; font-size:0.9em;">
+                	<form id="frmDetalleAmenaza" class="form-horizontal" role="form">
+                		<input type="hidden" name="txtIdAmenaza" id="txtIdAmenaza" >
+					  	<div class="form-group">
+						    <label for="txtActivo" class="col-sm-2 control-label">Activo</label>
+						    <div class="col-sm-10">
+						      	<input type="text" class="form-control" id="txtActivo" name="txtActivo" placeholder="Activo" readonly>
+						    </div>
+					  	</div>
+
+					  	<div class="form-group">
+						    <label for="txtAmenaza" class="col-sm-2 control-label">Amenaza</label>
+						    <div class="col-sm-10">
+						      	<input type="text" class="form-control" id="txtAmenaza" name="txtAmenaza" placeholder="Amenaza">
+						    </div>
+					  	</div>
+
+					  	<div class="form-group">
+						    <label for="txtVulnerabilidad" class="col-sm-2 control-label">Vulnerabilidad</label>
+						    <div class="col-sm-10">
+						      	<input type="text" class="form-control" id="txtVulnerabilidad" name="txtVulnerabilidad" placeholder="Vulnerabilidad">
+						    </div>
+					  	</div>
+
+					  	<div class="form-group">
+						    <label for="txtComentario" class="col-sm-2 control-label">Comentario</label>
+						    <div class="col-sm-10">
+						      	<input type="text" class="form-control" id="txtComentario" name="txtComentario" placeholder="Comentario">
+						    </div>
+					  	</div>
+
+					  	<div class="form-group">
+						    <label for="cboImportancia" class="col-sm-2 control-label">Importancia</label>
+						    <div class="col-sm-10">
+						      	<select id="cboImportancia" name="cboImportancia" class="form-control" style="width:200px">
+						      	<option></option>
+						      	<?php
+						      		$query = $objAmenaza->getImportancia();
+						      		while ($reg = $query->fetchObject()) {
+						      			echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+						      		}
+						      	?>
+						      	</select>
+						    </div>
+					  	</div>
+
+					  	<div class="form-group">
+						    <label for="cboProbabilidad" class="col-sm-2 control-label">Probabilidad</label>
+						    <div class="col-sm-10">
+						      	<select id="cboProbabilidad" name="cboProbabilidad" class="form-control" style="width:200px">
+						      	<option></option>
+						      	<?php
+						      		$query = $objAmenaza->getProbabilidad();
+						      		while ($reg = $query->fetchObject()) {
+						      			echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+						      		}
+						      	?>
+						      	</select>
+						    </div>
+					  	</div>
+
+					  	<div class="form-group">
+						    <label for="cboImpacto" class="col-sm-2 control-label">Impacto</label>
+						    <div class="col-sm-10">
+						      	<select id="cboImpacto" name="cboImpacto" class="form-control" style="width:200px">
+						      	<option></option>
+						      	<?php
+						      		$query = $objAmenaza->getImpacto();
+						      		while ($reg = $query->fetchObject()) {
+						      			echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+						      		}
+						      	?>
+						      	</select>
+						    </div>
+					  	</div>
+
+					  	<div class="form-group">
+						    <label for="cboRiesgo" class="col-sm-2 control-label">Riesgo</label>
+						    <div class="col-sm-10">
+						      	<select id="cboRiesgo" name="cboRiesgo" class="form-control" style="width:200px">
+						      	<option></option>
+						      	<?php
+						      		$query = $objAmenaza->getRiesgo();
+						      		while ($reg = $query->fetchObject()) {
+						      			echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+						      		}
+						      	?>
+						      	</select>
+						    </div>
+					  	</div>
+
+					  	<div class="form-group" style="text-align:right">
+						      <button type="submit" class="btn btn-primary">Guardar Información</button>
+						</div>
+					</form>
+                </div>
+                <div class="tab-pane fade" id="detalleAmenazaControles" style="padding:1em;">
+                	<!-- CONTROLES DE AMENAZA -->
+                	<div style="padding:1em 0;">
+                		<table border="0" width="100%">
+                			<tr>
+                				<td>
+                					<b><small>Detalle:</small></b>
+                					<input type="text" name="txtControlDetalle" id="txtControlDetalle" placeholder="Detalle control ..."  class="form-control input-sm" style="min-width:300px" />
+                				</td>
+                				<td>
+                					<b><small>Fecha inicio</small></b>
+                					<input type="date" name="txtControlFechaInicio" id="txtControlFechaInicio" placeholder="dd/mm/aaaa"  class="form-control input-sm" />
+                				</td>
+                				<td>
+                					<b><small>Fecha fin</small></b>
+                					<input type="date" name="txtControlFechaFin" id="txtControlFechaFin" placeholder="dd/mm/aaaa"  class="form-control input-sm" />
+                				</td>
+                				<td>
+                					<b><small>Costo (S/.)</small></b>
+                					<input type="text" name="txtControlCosto" id="txtControlCosto" placeholder="S/. 0.00"  class="form-control input-sm" />
+                				</td>
+                				<td>
+                					<b><small>Responsable</small></b>
+                					<select name="cboControlResponsable" id="cboControlResponsable" class="form-control input-sm">
+	                					<option></option>
+					                    <?php
+					                        $query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+					                        while($reg2 = $query_empleado->fetchObject()){
+					                            echo '<option value="'.$reg2->idempleado.'">'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+					                        }
+					                    ?>
+                					</select>
+                				</td>
+                			</tr>
+                		</table>
+                	</div>
+                	<div class="btn-group  btn-group-sm">
+                		<button type="button" id="btnAgregarControl" class="btn btn-primary"><span class="glyphicon glyphicon-file"></span> Agregar Control</button>
+                		<button type="button" id="btnActualizarControles" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span> Actualizar Controles</button>
+                		<button type="button" id="btnEliminarControles" class="btn btn-primary"><span class="glyphicon glyphicon-remove"></span> Eliminar Control(es)</button>
+                	</div>
+                	<div style="padding: 1em 0;">
+                		<table id="datagridControles" class="table table-condensed table-hover table-bordered" style="font-size:0.9em">
+                			<thead>
+                				<tr>
+                					<th style="width:25px"></th>
+                					<th>#</th>
+                					<th>Detalle</th>
+                					<th class="center">F.Inicio</th>
+                					<th class="center">F.Fin</th>
+                					<th class="center">Costo</th>
+                					<th>Responsable</th>
+                				</tr>
+                			</thead>
+                			<tbody></tbody>
+                		</table>
+                	</div>
+                </div>
+            </div>
+        </div>
+
+    	<!-- MODALES -->
+
+    	<div id="modalRecuperarAmenazas" class="modal fade">
+		  <div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        <h4 class="modal-title">Recuperar Amenazas</h4>
+		      </div>
+		      <div class="modal-body" style="font-size:0.85em;">
+		      	<form class="form" role="form">
+		      	<?php
+		      		$query_amenazas = $objAmenaza->getAmenazas();
+		      		while ($reg = $query_amenazas->fetchObject()) {
+		      			echo '<div class="checkbox"><label><input type="checkbox" value="'.$reg->idamenazas.'"> ['.$reg->codigo.'] '.$reg->detalle.'</label></div>';
+		      		}
+		      	?>
+		      	</form>
+		       </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Volver</button>
+		        <button type="button" id="btnGuardarCambios_frmEditarActivo" class="btn btn-primary">Seleccionar e Importar</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div>
+
+    	<?php } ?>
+
+    </div>
+ </div>
+ <script>
+ 	$(document).on("ready", function(){
+        $("form#frmDetalleAmenaza").on("submit", guardarInformacionAmenaza);
+        $("#btnAmenazaDescargar").on("click", descargarAmenazas);
+        
+        function guardarInformacionAmenaza(e){
+            e.preventDefault();
+            
+        };
+        function descargarAmenazas(e){
+            e.preventDefault();
+            
+            $.get("./ajax/analisis/analisis-riesgos-activo_consultar.ajax.php", { orden: "ninguno", pag: '<?=$_GET["pag"]?>', exportar: true }, function(r){
+ 			    var ventimp=window.open('','popimpr');
+                ventimp.document.write(r.toString());
+                ventimp.document.close();
+                //ventimp.print();
+                ventimp.close();
+ 			});
+        };
+        
+ 		<?php if(!(isset($_GET["activo"]) && !empty($_GET["activo"]) && is_numeric($_GET["activo"]))){ ?>
+
+ 		$("a#btnOrdenarPorNinguna").click(ordenarPorNinguna);
+ 		$("a#btnOrdenarConfidencialidad").click(ordenarPorConfidencialidad);
+ 		$("a#btnOrdenarPorIntegridad").click(ordenarPorIntegridad);
+ 		$("a#btnOrdenarPorDisponibilidad").click(ordenarPorDisponibilidad);
+ 		$("a#btnOrdenarPorImportancia").click(ordenarPorImportancia);
+        
+ 		ordenarPorNinguna;   
+ 		
+ 		function ordenarPorNinguna(e){
+ 			e.preventDefault();
+ 			$.get("./ajax/analisis/analisis-riesgos-activo_consultar.ajax.php", { orden: "ninguno", pag: '<?=$_GET["pag"]?>' }, function(r){
+ 				$("div#contenedorDatagridActivos").html(r);
+ 			});
+
+ 		};
+
+ 		function ordenarPorConfidencialidad(e){
+ 			e.preventDefault();
+ 			$.get("./ajax/analisis/analisis-riesgos-activo_consultar.ajax.php", { orden: "confidencialidad", pag: '<?=$_GET["pag"]?>' }, function(r){
+ 				$("div#contenedorDatagridActivos").html(r);
+ 			});
+ 		};
+
+ 		function ordenarPorIntegridad(e){
+ 			e.preventDefault();
+ 			$.get("./ajax/analisis/analisis-riesgos-activo_consultar.ajax.php", { orden: "integridad", pag: '<?=$_GET["pag"]?>' }, function(r){
+ 				$("div#contenedorDatagridActivos").html(r);
+ 			});
+ 		};
+
+ 		function ordenarPorDisponibilidad(e){
+ 			e.preventDefault();
+ 			$.get("./ajax/analisis/analisis-riesgos-activo_consultar.ajax.php", { orden: "disponibilidad", pag: '<?=$_GET["pag"]?>' }, function(r){
+ 				$("div#contenedorDatagridActivos").html(r);
+ 			});
+ 		};
+
+ 		function ordenarPorImportancia(e){
+ 			e.preventDefault();
+ 			$.get("./ajax/analisis/analisis-riesgos-activo_consultar.ajax.php", { orden: "importancia", pag: '<?=$_GET["pag"]?>' }, function(r){
+ 				$("div#contenedorDatagridActivos").html(r);
+ 			});
+ 		};
+
+ 		<?php }else{ ?>
+
+ 		consultarAmenazas();
+
+ 		$("button#btnAmenazaAtras").click(function(){ history.back(); });
+ 		$("button#btnAmenazaRecuperar").click(recuperarAmenazas);
+ 		$('#amenazasDetalleTab a').click(function (e) { e.preventDefault();	$(this).tab('show'); });
+ 		$("button#btnAmenazaActualizar").click(consultarAmenazas);
+ 		$("button#btnAmenazaNueva").click(nuevaAmenaza);
+ 		$("button#btnAmenazaEliminar").click(eliminarAmenaza);
+
+ 		$("button#btnAgregarControl").click(agregarControl);
+ 		$("button#btnAgregarControl").click(consultarControles);
+ 		$("button#btnEliminarControles").click(eliminarControles);
+
+ 		function nuevaAmenaza(){
+ 			$.post("./ajax/analisis/amenaza_nuevo.ajax.php", { activo: <?=$_GET["activo"]?> }, function(r){
+ 				consultarAmenazas();
+ 			});
+ 		};
+
+ 		function eliminarAmenaza(){
+ 			var data = [];
+ 			var chk = $("input[name=chkAmenaza]:checked");
+ 			$.each(chk, function(index, value){
+ 				data.push(value.value);
+ 			});
+
+ 			$.post("./ajax/analisis/amenaza_eliminar.ajax.php", { amenaza: data }, function(r){
+ 				consultarAmenazas();
+ 			});
+ 		}
+
+ 		function consultarAmenazas(){
+ 			$.get("./ajax/analisis/amenaza_consultar.ajax.php",{ activo: <?=$_GET["activo"]?> }, function(r){
+ 				$("table#datagridAmenazas tbody").html(r);
+ 			});
+ 		};
+
+
+ 		function recuperarAmenazas(){
+ 			$("div#modalRecuperarAmenazas").modal("show");
+ 		};
+
+ 		function agregarControl(){
+ 			var amenaza = $("input#txtIdAmenaza").val()
+ 				detalle = $("input#txtControlDetalle").val()
+ 				fi = $("input#txtControlFechaInicio").val()
+ 				ff = $("input#txtControlFechaFin").val()
+ 				costo = $("input#txtControlCosto").val()
+ 				responsable = $("select#cboControlResponsable").val();
+
+ 				if(detalle == ""){
+ 					alert("Debe escribir un detalle al control.");
+ 					return;
+ 				}
+ 				if(fi == "" || ff == ""){
+ 					alert("Debe ingresar la fecha de inicio y fin.");
+ 					return;
+ 				}
+ 				if(costo == ""){
+ 					alert("Debe ingresar un costo al control.");
+ 					return;
+ 				}
+
+ 			$.post("./ajax/analisis/control_agregar.ajax.php", { amenaza: amenaza, detalle: detalle, fi: fi, ff: ff, costo: costo, responsable: responsable }, function(r){
+ 				consultarControles();
+ 				LimpiarControlDetalle();
+ 			});
+ 		};
+
+ 		function LimpiarControlDetalle(){
+ 			$("input#txtControlDetalle").val("");
+ 			$("input#txtControlFechaInicio").val("");
+ 			$("input#txtControlFechaFin").val("");
+ 			$("input#txtControlCosto").val("");
+ 			$("select#cboControlResponsable option:first").attr("selected","selected");
+ 		};
+
+ 		function eliminarControles(){
+ 			var data = [];
+ 			var chk = $("input[name=chkControl]:checked");
+ 			$.each(chk, function(index, value){
+ 				data.push(value.value);
+ 			});
+
+ 			$.post("./ajax/analisis/control_eliminar.ajax.php", { control: data }, function(r){
+ 				consultarControles();
+ 			});
+ 		}
+
+ 		<?php } ?>
+ 	});
+
+	function cargarInformacionAmenaza(id, amenaza, activo, vulnerabilidad, comentario, importancia, probabilidad, impacto, riesgo){
+		LimpiarAmenazasDetalle();
+
+		$("input#txtIdAmenaza").val(id);
+ 		$("input#txtActivo").val(activo);
+ 		$("input#txtAmenaza").val(amenaza);
+ 		$("input#txtVulnerabilidad").val(vulnerabilidad);
+ 		$("input#txtComentario").val(comentario);
+
+ 		$("select#cboImportancia option[value="+importancia+"]").attr("selected","selected");
+ 		$("select#cboProbabilidad option[value="+probabilidad+"]").attr("selected","selected");
+ 		$("select#cboImpacto option[value="+impacto+"]").attr("selected","selected");
+ 		$("select#cboRiesgo option[value="+riesgo+"]").attr("selected","selected");
+
+ 		consultarControles();
+ 	};
+
+ 	function LimpiarAmenazasDetalle(){
+		$("input#txtIdAmenaza").val("");
+ 		$("input#txtActivo").val("");
+ 		$("input#txtAmenaza").val("");
+ 		$("input#txtVulnerabilidad").val("");
+ 		$("input#txtComentario").val("");
+	 	$("select#cboImportancia option:first").attr("selected","selected");
+	 	$("select#cboProbabilidad option:first").attr("selected","selected");
+	 	$("select#cboImpacto option:first").attr("selected","selected");
+	 	$("select#cboRiesgo option:first").attr("selected","selected");
+ 	};
+
+ 	function consultarControles(){
+ 			var amenaza = $("input#txtIdAmenaza").val();
+ 			$.get("./ajax/analisis/control_consultar.ajax.php", { amenaza: amenaza }, function(r){
+ 				$("table#datagridControles tbody").html(r);
+ 			});
+ 	}
+ </script>

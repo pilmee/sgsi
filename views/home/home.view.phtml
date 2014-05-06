@@ -1,0 +1,56 @@
+<?php
+    $pag_title = "Acta de Reunion";
+    require_once "./views/layout/header.layout.phtml";
+?>
+   <div class="col-md-3">
+                <!-- SUB MENU -->
+                <div class="bs-sidebar submenu" style="padding: 0">
+                    <ul class="nav">
+                        <li class=""><div class="panel-heading titulo" style="border-top:none;">Opciones <span class="pull-right glyphicon glyphicon-tag"></span></div></li>
+                        <li class="active">
+                            <a href="?pag=manual" data-toggle="tooltip" data-placement="right" title data-original-title="Manual para el correcto uso del SGSI.">Manual</a>
+                        </li>
+                        <li class=""><div class="panel-heading titulo">Secciones <span class="pull-right glyphicon glyphicon-tag"></span></div></li>
+                        <li>
+                            <a href="?pag=acta_reunion" data-toggle="tooltip" data-placement="right" title data-original-title="Permite crear, enviar y organizar actas de reuniones">
+                                <span class="badge pull-right">
+                                    <?=$objActaReunion->getNumActas();?>
+                                </span>
+                                Actas de Reunion
+                            </a>
+                        </li>
+                        <li class=""><div class="panel-heading titulo">Configuración <span class="pull-right glyphicon glyphicon-tag"></span></div></li>
+                        <li>
+                            <a href="?pag=empresa" data-toggle="tooltip" data-placement="right" title data-original-title="Configuracion de parametros y valores pertenecientes a la empresa.">Empresa</a>
+                        </li>
+                        <li>
+                            <a href="?pag=sg" data-toggle="tooltip" data-placement="right" title data-original-title="Configuracion de parametros y valores correspondientes al Sistema de Gestion de la Seguridad Informatica.">SG</a>
+                        </li>
+                    </ul>
+                  </div>
+            </div>
+            
+    <div class="col-md-9">
+    <?php
+        if(isset($_GET["pag"]) && !empty($_GET["pag"])){
+            $pagina = strip_tags($_GET["pag"]);
+            $pagina = "$pagina.view.phtml";
+            
+            //if(file_exists($pagina)){
+            //require_once $pagina;
+            //}else{
+            //    echo '<div class="alert alert-danger"><h4>Error</h4><p>Ocurrio un error al cargar el archivo.</p></div>';
+            //}
+            
+            if(!isset($_GET["acta"]) || empty($_GET["acta"]) ){
+                require_once $pagina;
+            }else{
+                require_once "acta_reunion_editar.view.phtml";
+            }
+            
+        }
+    ?>
+    </div>
+<?php
+    require_once "./views/layout/footer.layout.phtml";
+?>

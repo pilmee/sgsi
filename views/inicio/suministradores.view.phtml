@@ -1,0 +1,73 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Suministradores</h3>
+    </div>
+    <div class="panel-body">
+    <?php if((!isset($_GET["suministrador"]) && empty($_GET["suministrador"]))){ ?>
+        <div style="border-bottom:1px solid #ccc; margin-bottom: 1em; padding-bottom: 1em;">
+            <div class="btn-group btn-group-sm">
+                <button id="btnSuministradorNuevo" type="button" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Nuevo Suministrador</button>
+                <button id="btnSuministradorActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Actualizar</button>
+                <button id="btnSuministradorEliminar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Eliminar</button>
+            </div>
+        </div>
+        <div id="dataGridSuministradores">
+            <table class="table table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>RUC</th>
+                        <th>Razon Social</th>
+                        <th>Indicador Asociado</th>
+                        <th>Estado</th>
+                        <th>Descripcion</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                        $query_suministrador = $objSuministrador->ConsultarSuministradores();
+                        $i = 1;
+                        $pag = $_GET["pag"];
+                        while($reg = $query_suministrador->fetchObject())
+                        {
+                        	if($reg->estado){ $est = "Alta"; }else{ $est = "Baja"; }                        	
+                            echo '<tr><td>'.$i.'</td><td>'.$reg->RUC.'</td><td><a href="?pag='.$pag.'&suministrador='.$reg->idsuministrador.'">'.$reg->razon_social.'</a></td><td>'.$reg->detalle.'</td><td>'.$est.'</td><td>'.$reg->descripcion.'</td><td><input type="checkbox" name="suministradores[]" value="'.$reg->idsuministrador.'"></td></tr>';
+                            $i++;
+                        }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    <?php }else{ require_once "suministradores-editar.view.phtml"; }?>
+    </div>
+</div>
+<script>
+	$("button#btnSuministradorNuevo").click(SuministradorNuevo);
+    $("button#btnSuministradorActualizar").click(SuministradorActualizar);
+    $("button#btnSuministradorEliminar").click(SuministradorEliminar);
+
+    function SuministradorNuevo(){
+    	$.post("./ajax/inicio/suministrador_nuevo.ajax.php", { empresa: <?=$_SESSION["empresa"]?>}, function(r){
+    		console.log(r);
+    		SuministradorActualizar();
+    	});
+    }
+
+    function SuministradorActualizar(){
+    	$.get("./ajax/inicio/suministrador_consultar.ajax.php", { pag : '<?php echo $_GET["pag"]; ?>' }, function(r){
+                $("div#dataGridSuministradores table tbody").html(r);
+            });
+    }
+
+    function SuministradorEliminar(){
+    	$("input[type=checkbox]:checked").each(function(index, val){
+            $.post("./ajax/inicio/suministrador_eliminar.ajax.php", { suministrador: val.value }, function(r){
+            	console.log(r);        
+            });
+        });
+        SuministradorActualizar();
+    }
+
+</script>
+        

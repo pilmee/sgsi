@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es_PE">
+    <head>
+        <meta charset="utf-8" />
+        <title><?php echo isset($pag_title) && !empty($pag_title) ? $pag_title : APP_NAME ?></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="./static/css/bootstrap.css">
+        
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="./static/css/bootstrap-theme.css">
+        <!-- jQuery TreeView CSS -->
+        <link rel="stylesheet" href="./static/css/jquery.treeview.css" />
+        <!-- Global Page CSS -->
+        <link rel="stylesheet" href="./static/css/estilos.css" />
+        
+        <script src="./static/js/jquery-1.10.1.min.js"></script>
+        <script src="./static/js/jquery-migrate-1.2.1.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="./static/js/bootstrap.min.js"></script>
+        
+        <script src="./static/js/carrito.js"></script>
+        <script src="./static/js/conf.js"></script>
+
+        <script src="./static/js/jquery.treeview.js"></script>
+
+        <script src="./static/js/aplicacion.js"></script>
+    </head>
+    <body>
+        <a class="sr-only" href="#content">Skip navigation</a>
+        <header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+            <div class="container-menu">
+                <div class="navbar-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="../" class="navbar-brand"><b>S.G.S.I.</b></a>
+                </div>
+                <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <li <?php if($html == 1) echo 'class="active"'; ?>>                            
+                            <a href="index"><span class="glyphicon glyphicon-home"></span> Home</a>
+                        </li>
+                        <li <?php if($html == 2) echo 'class="active"'; ?>>
+                            <a href="inicio"><span class="glyphicon glyphicon-tower"></span> Inicio</a>
+                        </li>
+                        <li <?php if($html == 3) echo 'class="active"'; ?>>
+                            <a href="analisis"><span class="glyphicon glyphicon-signal"></span> Análisis</a>
+                        </li>
+                        <!--
+                        <li <?php if($html == 4) echo 'class="active"'; ?>>
+                            <a href="planes"><span class="glyphicon glyphicon-star"></span> Planes</a>
+                        </li>
+                        <li <?php if($html == 5) echo 'class="active"'; ?>>
+                            <a href="gestion"><span class="glyphicon glyphicon-lock"></span> Gestión</a>
+                        </li>
+                        <li <?php if($html == 6) echo 'class="active"'; ?>>
+                            <a href="scorecard"><span class="glyphicon glyphicon-stats"></span> ScoreCard</a>
+                        </li>
+                        -->
+                        <?php  if(isset($_SESSION["login"])){ ?>
+                        <li>
+                            <a href="salir.php"><span class="glyphicon glyphicon-share-alt"></span> Salir</a>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        <section id="main" class="row">
+
+        

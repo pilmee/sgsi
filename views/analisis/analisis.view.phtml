@@ -1,0 +1,44 @@
+<?php
+    require_once "./views/layout/header.layout.phtml";
+?>
+   <div class="col-md-3">
+                <!-- SUB MENU -->
+                <div class="bs-sidebar submenu" style="padding: 0">
+                    <ul class="nav">
+                        <li class=""><div class="panel-heading titulo" style="border-top:none;">Opciones <span class="pull-right glyphicon glyphicon-tag"></span></div></li>
+                        <li class="active">
+                            <a href="?pag=inventario-activos" data-toggle="tooltip" data-placement="right" title data-original-title="Relación de los activos para la realización del análisis de riesgos. Valoración en dimensiones de seguridad y cálculo de su importancia.">Inventario de Activos</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=analisis-riesgos" data-toggle="tooltip" data-placement="right" title data-original-title="Evaluación de amenazas, vulnerabilidades, probabilidad de ocurrencia e impacto de cada activo. Cálculo del riesgo.">Análisis de Riesgos</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=evaluacion-riesgos" data-toggle="tooltip" data-placement="right" title data-original-title="Revisión de Riesgos resultantes, establecimiento del Nivel de Riesgo Aceptable y presentación del mapa de riesgos">Evaluación de Riesgos</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=gestion-riesgos" data-toggle="tooltip" data-placement="right" title data-original-title="Definición y seguimiento del plan de tratamiento de riesgos.">Gestión de Riesgos</a>
+                        </li>
+                        <li class="hidden">
+                            <a href="?pag=soa" data-toggle="tooltip" data-placement="right" title data-original-title="Declaración de Aplicabilidad según la ISO 27001 con trazabilidad documental y nivel de madurez de los controles.">SOA</a>
+                        </li>
+                        <li class="hidden">
+                            <a href="?pag=historicos" data-toggle="tooltip" data-placement="right" title data-original-title="Gestión y consulta de análisis de riesgos anteriores">Historicos</a>
+                        </li>
+
+                    </ul>
+                  </div>
+            </div>
+            
+    <div class="col-md-9">
+    <?php
+        if(isset($_GET["pag"]) && !empty($_GET["pag"])){
+            $pagina = strip_tags($_GET["pag"]);
+            $pagina = "$pagina.view.phtml";
+            require_once $pagina;
+            
+        }
+    ?>
+    </div>
+<?php
+    require_once "./views/layout/footer.layout.phtml";
+?>

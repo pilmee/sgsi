@@ -1,0 +1,309 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Roles y Responsabilidades</h3>
+    </div>
+    <div class="panel-body">
+        <div>
+            <ul id="opcionesTAB" class="nav nav-tabs">
+                <li class="active"><a href="#roles-empleados">Roles y Empleados</a></li>
+                <li><a href="#roles-competencias">Roles y Competencias</a></li>
+                <li><a href="#funciones-obligaciones">Funciones y Obligaciones</a></li>
+            </ul>
+            
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade active in" id="roles-empleados">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div style="padding: 1em; text-align: left; margin-top: 1em; text-decoration: underline; font-weight:bold">
+                                Asignación y retiro de roles(cargos) a empleados.
+                            </div>
+                            <form id="frmRolesyEmpleados" class="form-horizontal" role="form" method="post" action="roles_empleados_agregar.ajax.php">
+                                <div class="form-group">
+                                    <label for="cboRolesEmpleadoCargo" class="col-lg-2 control-label">Roles (cargos)</label>
+                                    <div class="col-lg-10">
+                                        <select class="form-control input-sm" id="cboRolesEmpleadoCargo" name="cboRolesEmpleadoCargo" size="4" style="height: auto" required>
+                                            <?php
+                                                $query_cargo = $objCargo->ConsultarCargos($_SESSION["empresa"]);
+                                                while($reg2 = $query_cargo->fetchObject()){
+                                                    echo '<option value="'.$reg2->idcargo.'">'.$reg2->nombre.'</option>';
+                                                }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="" style="padding: 1em; text-align: left; margin-top: 1em; text-decoration: underline; font-weight:bold">
+                                    Asignar empleados a roles (cargos) de trabajo.
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="cboRolesEmpleadoEmpleado" class="col-lg-2 control-label">Empleados asignados</label>
+                                    <div class="col-lg-10">
+                                        <select class="form-control input-sm" id="cboRolesEmpleadoEmpleado" name="cboRolesEmpleadoEmpleado" size="10" style="height: auto" required>
+                                            <?php
+                                                $query_empleado = $objEmpleado->ConsultarEmpleadosSinCargo($_SESSION["empresa"]);
+                                                while($reg2 = $query_empleado->fetchObject()){
+                                                    echo '<option value="'.$reg2->idempleado.'"';
+                                                        //if($reg_obj->idempleado == $reg2->idempleado){ echo ' selected '; }
+                                                    echo '>'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+                                                }
+                                            ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" style="text-align: right; padding-right: 1em">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="glyphicon glyphicon-ok"></span> Agregar
+                                    </button>
+                                </div>
+                            </form>
+                            
+                            <div class="" style="padding: 1em; text-align: left; margin-top: 1em; text-decoration: underline; font-weight:bold">
+                                Retirar  rol de trabajo (cargo) a empleado.
+                            </div>
+                            <form  id="frmRolesyEmpleadosRetirar" class="form-horizontal" role="form" method="post" action="roles_empleados_eliminar.ajax.php">
+                                <div class="form-group">
+                                    <label for="cboRolesEmpleadoEmpleadoAsignado" class="col-lg-2 control-label">Empleados sin Cargo(s)</label>
+                                    <div class="col-lg-10">
+                                        <select class="form-control input-sm" id="cboRolesEmpleadoEmpleadoAsignado" name="cboRolesEmpleadoEmpleadoAsignado" size="10" style="height: auto" required>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" style="text-align: right; padding-right: 1em">
+                                    <button type="submit" class="btn btn-danger">
+                                        <span class="glyphicon glyphicon-ok"></span> Retirar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="padding: 1em; text-align:left; margin-top: 1em; text-decoration: underline; font-weight:bold">
+                                Vista previa de asignacion de empleados a cada área:
+                            </div>
+                            <div id="sidetreecontrol"><a href="?#">Comprimir todo</a> | <a href="?#">Expandir Todo</a></div>
+                            <ul id="RolesEmpleadoArbol" class="treeview-black">
+                                <?php
+                                    $query_cargo = $objCargo->ConsultarCargos($_SESSION["empresa"]);
+                                    while($reg = $query_cargo->fetchObject()){
+                                        echo '<li><span class="folder">'.$reg->nombre.'</span>';
+                                        $query_empleado = $objEmpleado->ConsultarEmpleadoSegunCargo($reg->idcargo);
+                                        if($query_empleado->rowCount() > 0){
+                                            echo '<ul>';
+                                            while($reg2 = $query_empleado->fetchObject()){
+                                                echo '<li><span>'.$reg2->apellidos.' '.$reg2->nombres.'</span></li>';
+                                            }
+                                            echo '</ul>';
+                                        }
+                                        echo '</li>';
+                                    }
+                                    
+                                ?>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="roles-competencias">
+                    <div style="padding: 1em; text-align: left; margin-top: 1em; text-decoration: underline; font-weight:bold">
+                        Asignación de Competencias
+                    </div>
+                    <form id="frmRolesyCompetencias" class="form-horizontal" role="form" method="post" action="roles_competencias_agregar.ajax.php">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-5" style="padding-right: 0.4em;">
+                                    <label for="cboRolesEmpleadoCargo" class="col-lg-4 control-label">Roles (cargos)</label>
+                                        <div class="col-lg-8">
+                                        <select class="form-control input-sm" id="cboRolesEmpleadoCargo" name="cboRolesEmpleadoCargo" style="height: auto" required>
+                                            <option></option>
+                                        <?php
+                                            $query_cargo = $objCargo->ConsultarCargos($_SESSION["empresa"]);
+                                            while($reg2 = $query_cargo->fetchObject()){
+                                                echo '<option value="'.$reg2->idcargo.'">'.$reg2->nombre.'</option>';
+                                            }
+                                        ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5" style="padding-right: 0.4em; padding-left: 0;">
+                                    <input type="text" name="txtRolesyCompetenciasDetalle" id="txtRolesyCompetenciasDetalle" class="form-control input-sm" placeholder="Competencia" value="" required />
+                                </div>
+                                <div class="col-lg-2" style="padding-right: 0.4em">
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="submit" id="btnRolesyCompetenciasAgregar" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin: 2em;">
+                                <table id="DatagridRolesyCompetencias" class="table table-condensed table-hover">
+                                    <thead>
+                                        <th>N</th>
+                                        <th>Competencia</th>
+                                        <th>Rol (cargo)</th>
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="tab-pane fade" id="funciones-obligaciones">
+                    <div style="padding: 1em; text-align: left; margin-top: 1em; text-decoration: underline; font-weight:bold">
+                        Asignación de Funciones y Obligaciones
+                    </div>
+                    <form id="frmRolesyFunciones" class="form-horizontal" role="form" method="post" action="roles_obligacion_agregar.ajax.php">
+                       <div class="form-group">
+                            <div class="row">
+                                <div class="col-lg-5" style="padding-right: 0.4em;">
+                                    <label for="cboRolesEmpleadoCargo" class="col-lg-4 control-label">Roles (cargos)</label>
+                                        <div class="col-lg-8">
+                                        <select class="form-control input-sm" id="cboRolesEmpleadoCargo" name="cboRolesEmpleadoCargo" style="height: auto" required>
+                                            <option></option>
+                                        <?php
+                                            $query_cargo = $objCargo->ConsultarCargos($_SESSION["empresa"]);
+                                            while($reg2 = $query_cargo->fetchObject()){
+                                                echo '<option value="'.$reg2->idcargo.'">'.$reg2->nombre.'</option>';
+                                            }
+                                        ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5" style="padding-right: 0.4em; padding-left: 0;">
+                                    <input type="text" name="txtRolesyFuncionesDetalle" id="txtRolesyFuncionesDetalle" class="form-control input-sm" placeholder="Funciones / Obligaciones" value="" required />
+                                </div>
+                                <div class="col-lg-2" style="padding-right: 0.4em">
+                                    <div class="btn-group btn-group-sm">
+                                        <button type="submit" id="btnRolesyFuncionesAgregar" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Añadir</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="margin: 2em;">
+                                <table id="DatagridRolesyFunciones" class="table table-condensed table-hover">
+                                    <thead>
+                                        <th>N</th>
+                                        <th>Funciones / Obligación</th>
+                                        <th>Rol (cargo)</th>
+                                        <th></th>
+                                    </thead>
+                                    <tbody>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    /*** autoloads ***/
+    ConsultarRolesCompetencias();
+    ConsultarRolesFunciones();
+    /*** eventos ***/
+    
+    /** ROLES Y FUNCIONES **/
+    
+    $("form#frmRolesyFunciones").submit(function(e){
+        e.preventDefault();
+        $.post("./ajax/inicio/"+$(this).attr("action"), $(this).serialize(), function(r){
+            console.log(r);
+            $("input#txtRolesyFuncionesDetalle").val("");
+            ConsultarRolesFunciones();
+        });
+    });
+    
+    function ConsultarRolesFunciones() {
+        $.get("./ajax/inicio/roles_obligacion_consultar.ajax.php", { empresa: <?=$_SESSION["empresa"]?> }, function(r){
+            $("table#DatagridRolesyFunciones tbody").html(r);
+        });
+    }
+    
+    /** ROLES Y COMPETENCIAS **/
+    $("form#frmRolesyCompetencias").submit(function(e){
+        e.preventDefault();
+        $.post("./ajax/inicio/"+$(this).attr("action"), $(this).serialize(), function(r){
+            console.log(r);
+            $("input#txtRolesyCompetenciasDetalle").val("");
+            ConsultarRolesCompetencias();
+        });
+    });
+    
+    function ConsultarRolesCompetencias(){
+        $.get("./ajax/inicio/roles_competencias_consultar.ajax.php", { empresa: <?=$_SESSION["empresa"]?> }, function(r){
+            $("table#DatagridRolesyCompetencias tbody").html(r);
+        });
+    }
+    
+    /** FIN **/
+    
+    
+    $("form#frmRolesyEmpleados").submit(function(e){
+        e.preventDefault();
+        $.post("./ajax/inicio/"+$(this).attr("action"), $(this).serialize(), function(r){
+            ConsultarEmpleadosSinCargo();
+            ConsultarEmpleadosCargosArbol();
+            ConsultarEmpleadoAsignado($("select#cboRolesEmpleadoCargo").val());
+            alert(r);
+        });
+    });
+    
+    $("form#frmRolesyEmpleadosRetirar").submit(function(e){
+        e.preventDefault();
+        $.post("./ajax/inicio/"+$(this).attr("action"), $(this).serialize(), function(r){
+            ConsultarEmpleadosSinCargo();
+            ConsultarEmpleadosCargosArbol();
+            ConsultarEmpleadoAsignado($("select#cboRolesEmpleadoCargo").val());
+            alert(r);
+        });
+    });
+    
+    $("select#cboRolesEmpleadoCargo").click(function(){
+        ConsultarEmpleadoAsignado($(this).val());
+    });
+    
+    function ConsultarEmpleadoAsignado(cargo){
+        $.get("./ajax/inicio/roles_empleados_empleado_asignado_consultar.ajax.php", { cargo: cargo }, function(r){
+            $("select#cboRolesEmpleadoEmpleadoAsignado").html(r);
+        });
+    }
+    
+    function ConsultarEmpleadosSinCargo() {
+        $.get("./ajax/inicio/roles_empleados_empleado_consultar.ajax.php", { empresa: <?=$_SESSION["empresa"]?> }, function(r){
+            $("select#cboRolesEmpleadoEmpleado").html(r);
+        });
+    }
+    
+    function ConsultarEmpleadosCargosArbol() {
+        $.get("./ajax/inicio/roles_empleados_arbol_consultar.ajax.php", { empresa: <?=$_SESSION["empresa"]?> }, function(r){
+            $("ul#RolesEmpleadoArbol").html(r);
+        });
+    }
+    
+    /*** funciones ***/
+    
+    $('#opcionesTAB a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    });
+</script>
+
+<script>
+    $("#RolesEmpleadoArbol").treeview({
+        collapsed: true,
+        animated: "medium",
+        control:"#sidetreecontrol",
+        persist: "location"
+    });
+    
+</script>

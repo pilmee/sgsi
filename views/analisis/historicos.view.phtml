@@ -1,0 +1,81 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Listado de Históricos</h3>
+    </div>
+    <div class="panel-body">
+    	<div id="graficoHistoricoRiesgos"></div>
+    	<div>
+    		<table id="datagridAmenazasProcesadas" class="table table-condensed table-hover" style="font-size:0.9em">
+    			<thead>
+    				<th>#</th>
+    				<th>Activo</th>
+    				<th>Amenaza</th>
+    				<th class="center">NRA</th>
+    				<th class="center">Riesgo</th>
+    			</thead>
+    			<tbody>
+    			</tbody>
+    		</table>
+    	</div>
+    </div>
+ </div>
+
+<script src="./static/js/highcharts.js"></script>
+<script src="./static/js/exporting.js"></script>
+<script>
+graficoHistoricoRiesgos();
+
+	function graficoHistoricoRiesgos(){
+		$('#graficoHistoricoRiesgos').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Número de amenazas por Nivel de Riesgo'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: ['Muy Bajo','Bajo','Medio','Alto','Muy Alto']
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Amenazas'
+                }
+            },
+            tooltip: {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Actual',
+                data: [<?=$objAmenaza->ContarAmenazasDeActivo(1)?>, <?=$objAmenaza->ContarAmenazasDeActivo(2)?>, <?=$objAmenaza->ContarAmenazasDeActivo(3)?>, <?=$objAmenaza->ContarAmenazasDeActivo(4)?>, <?=$objAmenaza->ContarAmenazasDeActivo(5)?>]
+    
+            }, {
+                name: 'New York',
+                data: [83.6, 78.8, 98.5, 93.4, 106.0]
+    
+            }, {
+                name: 'London',
+                data: [48.9, 38.8, 39.3, 41.4, 47.0]
+    
+            }, {
+                name: 'Berlin',
+                data: [42.4, 33.2, 34.5, 39.7, 52.6]
+    
+            }]
+        });
+	};
+</script>

@@ -1,0 +1,286 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Inventario de Activos</h3>
+    </div>
+    <div class="panel-body">
+    	<div style="border-bottom:1px solid #ccc; margin-bottom: 1em; padding-bottom: 1em;">
+            <div class="btn-group btn-group-sm">
+                <button id="btnActivoNuevo" type="button" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Nuevo Activo</button>
+                <button id="btnActivoActualizar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span> Actualizar</button>
+                <button id="btnActivoEliminar" type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span> Eliminar</button>
+            </div>
+        </div>
+
+        <div>
+        	<table id="datagridActivos" class="table table-condensed table-hover" style="font-size:0.9em">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Activo</th>
+                        <th class='center'>uds</th>
+                        <th class='center'>Categoria</th>
+                        <th>Propietario</th>
+                        <th class='center'>Confidencialidad</th>
+                        <th class='center'>Integridad</th>
+                        <th class='center'>Disponibilidad</th>
+                        <th class='center'>Importancia</th>
+                        <th colspan="2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+ </div>
+
+ <!-- MODALES -->
+<div id="modalEditarActivo" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Editar Activo</h4>
+      </div>
+      <div class="modal-body" style="font-size:0.85em;">
+        <form id="frmEditarActivo" method="post" class="form-horizontal" role="form">
+        <input type="hidden" name="txtActivoId" id="txtActivoId">
+        	<b>DATOS GENERALES: </b>
+        	<hr style="margin:5px 0 10px 0 " />
+	        	<div class="form-group">
+				    <label for="txtActivo" class="col-sm-4 control-label">Activo</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="txtActivo" name="txtActivo" placeholder="Activo">
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="txtUnidades" class="col-sm-4 control-label">Unidades</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="txtUnidades" name="txtUnidades" placeholder="Unidades">
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="txtPropietario" class="col-sm-4 control-label">Propietario</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="txtPropietario" name="txtPropietario" placeholder="Propietario">
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="cboCategoria" class="col-sm-4 control-label">Categoria</label>
+				    <div class="col-sm-8">
+					    <select id="cboCategoria" name="cboCategoria" class="form-control">
+					    	<option></option>
+					    <?php
+					    	$query_categorias = $objActivo->getCategorias();
+					    	while ($reg = $query_categorias->fetchObject()) {
+					    		echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+					    	}
+					    ?>
+					    </select>
+				    </div>
+				</div>
+			
+			<b>INFORMACIÓN (Riesgos): </b>
+        	<hr style="margin:5px 0 10px 0 " />
+        		<div class="form-group">
+				    <label for="cboConfidencialidad" class="col-sm-4 control-label">Confidencialidad</label>
+				    <div class="col-sm-8">
+				        <select name="cboConfidencialidad" id="cboConfidencialidad" class="form-control">
+				      		<option></option>
+					    <?php
+					    	$query_confidencialidad = $objActivo->getConfidencialidad();
+					    	while ($reg = $query_confidencialidad->fetchObject()) {
+					    		echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+					    	}
+					    ?>
+				        </select>
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="cboIntegridad" class="col-sm-4 control-label">Integridad</label>
+				    <div class="col-sm-8">
+				        <select name="cboIntegridad" id="cboIntegridad" class="form-control">
+				      		<option></option>
+					    <?php
+					    	$query_integridad = $objActivo->getIntegridad();
+					    	while ($reg = $query_integridad->fetchObject()) {
+					    		echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+					    	}
+					    ?>
+				        </select>
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="cboDisponibilidad" class="col-sm-4 control-label">Disponibilidad</label>
+				    <div class="col-sm-8">
+				        <select name="cboDisponibilidad" id="cboDisponibilidad" class="form-control">
+				      		<option></option>
+					    <?php
+					    	$query_disponibilidad = $objActivo->getDisponibilidad();
+					    	while ($reg = $query_disponibilidad->fetchObject()) {
+					    		echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+					    	}
+					    ?>
+				        </select>
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="cboImportancia" class="col-sm-4 control-label">Importancia</label>
+				    <div class="col-sm-8">
+				        <select name="cboImportancia" id="cboImportancia" class="form-control">
+				      		<option></option>
+					    <?php
+					    	$query_importancia = $objActivo->getImportancia();
+					    	while ($reg = $query_importancia->fetchObject()) {
+					    		echo '<option value="'.$reg->id.'">'.$reg->detalle.'</option>';
+					    	}
+					    ?>
+				        </select>
+				    </div>
+				</div>
+
+			<b>DATOS OPCIONALES: </b>
+        	<hr style="margin:5px 0 10px 0 " />
+        		<div class="form-group">
+				    <label for="txtUbicacionFisica" class="col-sm-4 control-label">Ubicación Física</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="txtUbicacionFisica" name="txtUbicacionFisica" placeholder="Ubicacion Fisica">
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="txtVersion" class="col-sm-4 control-label">Versión</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="txtVersion" name="txtVersion" placeholder="Version">
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="txtDescripcion" class="col-sm-4 control-label">Descripción</label>
+				    <div class="col-sm-8">
+				      <textarea class="form-control" id="txtDescripcion" name="txtDescripcion" placeholder="Descripcion"></textarea>
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="txtMarcaModelo" class="col-sm-4 control-label">Marca/Modelo</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="txtMarcaModelo" name="txtMarcaModelo" placeholder="Marca/Modelo">
+				    </div>
+				</div>
+
+				<div class="form-group">
+				    <label for="txtFuenteDistribuidor" class="col-sm-4 control-label">Fuente-Distribuidor</label>
+				    <div class="col-sm-8">
+				      <input type="text" class="form-control" id="txtFuenteDistribuidor" name="txtFuenteDistribuidor" placeholder="Fuente-Distribuidor">
+				    </div>
+				</div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+        <button type="button" id="btnGuardarCambios_frmEditarActivo" class="btn btn-primary">Guardar cambios</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
+
+<script>
+	console.log("iniciado");
+	$(document).on("ready", function(){
+		activoActualizar();
+
+		$("#btnActivoNuevo").click(activoNuevo);
+		$("#btnActivoActualizar").click(activoActualizar);
+		$("#btnActivoEliminar").click(activoEliminar);
+		$("button#btnGuardarCambios_frmEditarActivo").click(function(){
+			$("form#frmEditarActivo").submit();
+		});
+		$("form#frmEditarActivo").submit(guardarActivo);
+
+		function activoNuevo(){
+			$.post("./ajax/analisis/activo_nuevo.ajax.php",{ empresa: <?=$_SESSION["empresa"]?>}, function(r){
+				activoActualizar();
+			});
+		};
+
+		function activoActualizar(){
+			$.get("./ajax/analisis/activo_consultar.ajax.php", function(r){
+				$("table#datagridActivos tbody").html(r);
+			});
+			console.log("Tabla de activos actualizada");
+		};
+
+		function activoEliminar(){
+			$("input[type=checkbox]:checked").each(function(index, val){
+                $.post("./ajax/analisis/activo_eliminar.ajax.php", { activo: val.value }, function(r){
+					if(r){
+						alert(r);
+					}else{
+						activoActualizar();
+					}
+				});
+            });
+		};
+
+		function guardarActivo(e){
+			e.preventDefault();
+			$.post("./ajax/analisis/activo_guardar.ajax.php", $(this).serialize(), function(r){
+				activoActualizar();
+				$("div#modalEditarActivo").modal("hide");
+				limpiarActivoEditar();
+			});
+		};
+		
+	});
+
+	function activoEditar(activo){
+		$.getJSON("./ajax/analisis/activo_abrir.ajax.php", { activo: activo }, function(r){
+			if(r){
+				limpiarActivoEditar();
+				$("input#txtActivoId").val(r.idactivo);
+				$("input#txtActivo").val(r.activo);
+				$("input#txtUnidades").val(r.uds);
+				$("input#txtPropietario").val(r.propietario);
+				$("select#cboCategoria option[value="+r.idactivo_categoria+"]").attr("selected","selected");
+				$("select#cboConfidencialidad option[value="+r.idactivo_confidencialidad+"]").attr("selected","selected");
+				$("select#cboIntegridad option[value="+r.idactivo_integridad+"]").attr("selected","selected");
+				$("select#cboDisponibilidad option[value="+r.idactivo_disponibilidad+"]").attr("selected","selected");
+				$("select#cboImportancia option[value="+r.idactivo_importancia+"]").attr("selected","selected");
+				$("input#txtUbicacionFisica").val(r.ubicacion_fisica);
+				$("input#txtVersion").val(r.version);
+				$("input#txtMarcaModelo").val(r.marca_modelo);
+				$("input#txtFuenteDistribuidor").val(r.fuente_distribuidor);
+				$("textarea#txtDescripcion").val(r.descripcion);
+
+				$("div#modalEditarActivo").modal("show");	
+			}
+		});
+	};
+
+	function limpiarActivoEditar(){
+		$("input#txtActivoId").val("");
+		$("input#txtActivo").val("");
+		$("input#txtUnidades").val("");
+		$("input#txtPropietario").val("");
+		$("select#cboCategoria option:first").attr("selected","selected");
+		$("select#cboConfidencialidad option:first").attr("selected","selected");
+		$("select#cboIntegridad option:first").attr("selected","selected");
+		$("select#cboDisponibilidad option:first").attr("selected","selected");
+		$("select#cboImportancia option:first").attr("selected","selected");
+		$("input#txtUbicacionFisica").val("");
+		$("input#txtVersion").val("");
+		$("input#txtMarcaModelo").val("");
+		$("input#txtFuenteDistribuidor").val("");
+		$("textarea#txtDescripcion").val("");
+	};
+</script>

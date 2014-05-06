@@ -1,0 +1,64 @@
+<?php
+    $pag_title = "Inicio";
+    require_once "./views/layout/header.layout.phtml";
+?>
+   <div class="col-md-3">
+                <!-- SUB MENU -->
+                <div class="bs-sidebar submenu" style="padding: 0">
+                    <ul class="nav">
+                        <li class=""><div class="panel-heading titulo" style="border-top:none;">Opciones <span class="pull-right glyphicon glyphicon-tag"></span></div></li>
+                        <li class="active">
+                            <a href="?pag=inicio-alcance" data-toggle="tooltip" data-placement="right" title data-original-title="Descripción del alcance y ámbito del sistema de gestión">Inicio y Alcance</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=objetivos-sg" data-toggle="tooltip" data-placement="right" title data-original-title="Permite definir y desarrollar objetivos de mejora del sistema de gestión y controlar su cumplimiento.">Objetivos del SG</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=roles-responsabilidades" data-toggle="tooltip" data-placement="right" title data-original-title="Permite asociar empleados con roles vinculados al sistema de gestión y al organigrama de la empresa.">Roles y Responsabilidades</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=analisis-gap" data-toggle="tooltip" data-placement="right" title data-original-title="Permite realizar una revisión del cumplimiento de la entidad contra diferentes normas y regulaciones">Análisis Gap</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=suministradores" data-toggle="tooltip" data-placement="right" title data-original-title="Gestión de suministradores, sus datos, contactos, contratos, SLAs y evaluaciones de cada uno.">Suministradores</a>
+                        </li>
+                        <li class=""><div class="panel-heading titulo" style="border-top:none;">Proyectos <span class="pull-right glyphicon glyphicon-tag"></span></div></li>
+                        <li class="">
+                            <a href="?pag=proyecto-gestion" data-toggle="tooltip" data-placement="right" title data-original-title="Planificación y control del proyecto con hitos, responsables y plazo de entrega">Gestión de Proyectos</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=proyecto-calendario" data-toggle="tooltip" data-placement="right" title data-original-title="Traslación de los hitos de la gestión del proyecto a un calendario visual">Calendario</a>
+                        </li>
+                        <li class="">
+                            <a href="?pag=proyecto-historico" data-toggle="tooltip" data-placement="right" title data-original-title="Consulta de planes de gestión de proyectos anteriores">Historico de Proyectos.</a>
+                        </li>
+                    </ul>
+                  </div>
+            </div>
+            
+    <div class="col-md-9">
+    <?php
+        if(isset($_GET["pag"]) && !empty($_GET["pag"])){
+            $pagina = strip_tags($_GET["pag"]);
+            $pagina = "$pagina.view.phtml";
+            
+            //if(file_exists($pagina)){
+            //require_once $pagina;
+            //}else{
+            //    echo '<div class="alert alert-danger"><h4>Error</h4><p>Ocurrio un error al cargar el archivo.</p></div>';
+            //}
+            
+            if(!isset($_GET["acta"]) || empty($_GET["acta"]) ){
+                $full_pag = false;
+                require_once $pagina;
+            }else{
+                $full_pag = true;
+                require_once $pagina;
+            }
+            
+        }
+    ?>
+    </div>
+<?php
+    require_once "./views/layout/footer.layout.phtml";
+?>

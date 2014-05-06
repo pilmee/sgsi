@@ -1,0 +1,588 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Gestión de Riesgos</h3>
+    </div>
+    <div class="panel-body">
+    	<div>
+    		<div id="detalleGestionDeRiesgos" class="" style="background:none">
+	            <ul id="amenazasDetalleTab" class="nav nav-tabs">
+	                <li class="active"><a href="#PlanificacionGestionDeRiesgos">Planificación de la gestión de riesgos</a></li>
+	                <li><a href="#SeguimientoPlanDeTratamiento">Seguimiento del plan de tratamiento</a></li>
+	            </ul>
+	            <div id="myTabContent" class="tab-content">
+	                <div class="tab-pane fade active in" id="PlanificacionGestionDeRiesgos" style="margin:1em; font-size:0.9em;">
+	                	<div class="btn-group btn-group-sm" style="padding:0 0 1em 0;">
+	                		<button type="button" class="btn btn-default" onclick="Asociar()"><span class="glyphicon glyphicon-link"></span> Asociar</button>
+	                		<div class="btn-group btn-group-sm">
+							  <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Mostrar</button>
+							  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+							    <span class="caret"></span>
+							    <span class="sr-only">Toggle Dropdown</span>
+							  </button>
+							  <ul id="opcionesbtnMostrarGR" class="dropdown-menu" role="menu">
+							    <li><a href="#" class="consultarGR" data-search="mostrar-todos" id="consultarGRMostrarTodos">Mostrar todos</a></li>
+							    <li><a href="#" class="consultarGR" data-search="superan-nra" id="consultarGRSuperanNRA">Superan NRA</a></li>
+							    <li><a href="#" class="consultarGR" data-search="sin-control" id="consultarGRSinControl">Sin control</a></li>
+							    <li><a href="#" class="consultarGR" data-search="sin-control-superan-nra" id="consultarGRSinControlSuperanNRA">Sin control y superan NRA</a></li>
+							  </ul>
+							</div>
+
+							<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-save"></span> Descargar</button>
+	                	</div>
+	                	<span style="display:inline-block;padding-left:1.2em;">
+							<b>NRA:</b> Alto.
+						</span>
+
+	                	<table id="datagridActivosAmenazasControles" class="table table-bordered" style="font-size:0.99em;">
+	                		<thead>
+	                			<tr>
+		                			<th style="width:20px">#</th>
+		                			<th class="" colspan="2">Árbol de Activos</th>
+		                			<th>Categoría</th>
+		                			<th class="center">Riesgo</th>
+		                		</tr>	
+	                		</thead>
+	                		<tbody></tbody>
+						</table>
+						
+						<div>
+							<ul id="amenazasDetalleTab" class="nav nav-tabs">
+								<li class="active"><a href="#PlanTratamiento">Plan de tratamiento</a></li>
+								<li><a href="#ControlesPropuestos" id="controlesPropuesto">Controles propuestos</a></li>
+							</ul>
+							<div id="myTabContent" class="tab-content">
+								<div class="tab-pane fade active in" id="PlanTratamiento" style="margin:1em; font-size:0.9em;">
+									<div class="btn-group btn-group-sm" style="padding:0 0 1em 0;">
+										<button id="btnNuevoPlanDeTratamiento" type="button" class="btn btn-default"><span class="glyphicon glyphicon-file"></span> Nuevo plan de tratamiento</button>
+										<button id="btnEliminarPlanesDeTratamiento" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span> Eliminar</button>
+									</div>
+
+									<div>
+										<table id="datagridPlanesDeTratamiento" class="table table-bordered">
+											<thead>
+												<th style="width: 10px">#</th>
+												<th>Nombres</th>
+												<th>Responsable</th>
+												<th>Recursos</th>
+												<th>Plazos</th>
+											</thead>
+											<tbody></tbody>
+										</table>	
+									</div>
+								</div>
+								<div class="tab-pane fade" id="ControlesPropuestos">
+								    <form id="frmControlesPropuestos" class="form-inline" role="form" style="display: block; margin: 1em 0;  overflow: hidden">
+									<div class="form-group col-sm-5" style="padding-left: 0">
+									    <label class="sr-only" for="cboPlanesDeTratamiento">Plan de tratamiento: </label>
+									    <select class="form-control" id="cboPlanesDeTratamiento" name="cboPlanesDeTratamiento">
+										<option value="">Seleccion un Plan de tratamiento</option>
+									    </select>
+									</div>
+									<div class="form-group col-sm-6" style="padding-left: 0">
+									    <label class="sr-only" for="cboControles">Controles: </label>
+									    <select class="form-control" id="cboControles" name="cboControles">
+										<option value=""> Seleccion un control</option>
+									    </select>
+									</div>
+									
+									<button type="submit" class="btn btn-primary  col-sm-1"><span class="glyphicon glyphicon-plus"></span> Agregar</button>
+								    </form>
+								    
+								    <div>
+									<table id="datagridControlPropuesto" class="table table-hover table-striped">
+									    <thead>
+										<th>#</th>
+										<th>Control</th>
+										<th colspan="2">Fecha</th>
+									    </thead>
+									    <tbody>
+										
+									    </tbody>
+									</table>
+								    </div>
+								</div>
+							</div>
+						</div>
+						
+	                </div>
+	                <div class="tab-pane fade" id="SeguimientoPlanDeTratamiento" style="margin:1em; font-size:0.9em;">
+			    Seguimiento
+	                </div>
+	            </div>
+	        </div>
+    	</div>
+
+    </div>
+ </div>
+
+<div id="modalPlanTratamiento" class="modal fade">
+  <div class="modal-dialog" style="width: 90%">
+    <form id="frmModalPlanTratamientoDetalle" name="frmModalPlanTratamientoDetalle" class="form-horizontal" role="form" style="margin: 0; padding: 0;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Plan de Tratamiento: <input type="hidden" name="txtIDPlanTratamiento" id="txtIDPlanTratamiento" class="form-control pull-right" style="width: 60px;" /></h4>
+      </div>
+      <div class="modal-body">
+        <div class="panel-group" id="accordion">
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+		<h4 class="panel-title">
+		  <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+		    1. Datos Generales:
+		  </a>
+		</h4>
+	      </div>
+	      <div id="collapseOne" class="panel-collapse collapse in">
+		<div class="panel-body">
+		    <div class="form-group">
+			<label for="txtNombrePlanTratamiento" class="col-sm-2 control-label">Nombre</label>
+			<div class="col-sm-10">
+			  <input type="text" class="form-control" id="txtNombrePlanTratamiento" name="txtNombrePlanTratamiento" placeholder="Nombre del Plan de Tratamiento">
+			</div>
+		    </div>
+		    <div class="form-group">
+			<label for="txtControlSOAPlanTratamiento" class="col-sm-2 control-label">Control SOA</label>
+			<div class="col-sm-10">
+			  <textarea class="form-control" id="txtControlSOAPlanTratamiento" name="txtControlSOAPlanTratamiento" placeholder="Control SOA"></textarea>
+			</div>
+		    </div>
+		    <div class="form-group">
+			<label for="cboResponsablePlanTratamiento" class="col-sm-2 control-label">Responsable</label>
+			<div class="col-sm-10">
+			    <select class="form-control" id="cboResponsablePlanTratamiento" name="cboResponsablePlanTratamiento">
+				<option value=""> Seleccion un empleado</option>
+			    <?php
+				$query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                                while($reg2 = $query_empleado->fetchObject()){
+				    echo '<option value="'.$reg2->idempleado.'">'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+				}
+                            ?>
+			    </select>
+			</div>
+		    </div>
+		    <div class="form-group">
+			<label for="txtRecursosPlanTratamiento" class="col-sm-2 control-label">Recursos</label>
+			<div class="col-sm-10">
+			  <textarea class="form-control" id="txtRecursosPlanTratamiento" name="txtRecursosPlanTratamiento" placeholder="Recursos"></textarea>
+			</div>
+		    </div>
+		    <div class="form-group">
+			<label for="txtPlazoPlanTratamiento" class="col-sm-2 control-label">Plazo</label>
+			<div class="col-sm-10">
+			  <input type="text" class="form-control" id="txtPlazoPlanTratamiento" name="txtPlazoPlanTratamiento" placeholder="Plazo">
+			</div>
+		    </div>
+		    <div class="form-group">
+			<label for="txtCosteAsociadoPlanTratamiento" class="col-sm-2 control-label">Coste Asociado</label>
+			<div class="col-sm-10">
+			  <input type="text" class="form-control" id="txtCosteAsociadoPlanTratamiento" name="txtCosteAsociadoPlanTratamiento" placeholder="0.00">
+			</div>
+		    </div>
+		    <div class="form-group">
+			<label for="txtObservacionesPlanTratamiento" class="col-sm-2 control-label">Observaciones</label>
+			<div class="col-sm-10">
+			  <textarea class="form-control" id="txtObservacionesPlanTratamiento" name="txtObservacionesPlanTratamiento" placeholder="Observaciones"></textarea>
+			</div>
+		    </div>
+		    <div class="form-group">
+			<label for="cboIndicadoresPlanTratamiento" class="col-sm-2 control-label">Indicadores</label>
+			<div class="col-sm-10">
+			  <select class="form-control" id="cboIndicadoresPlanTratamiento" name="cboIndicadoresPlanTratamiento">
+			    <option></option>
+			  <?php
+			    $query_indicador = $objIndicador->Consultar();
+			    while($reg = $query_indicador->fetchObject()){
+				echo '<option value="'.$reg->idindicador.'">'.$reg->detalle.'</option>';
+			    }
+			  ?>
+			  </select>
+			  <select class="form-control" id="cboIndicadoresListaPlanTratamiento" name="cboIndicadoresListaPlanTratamiento" size="4" style="margin-top: 10px">
+			  </select>
+			</div>
+		    </div>
+		</div>
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+		<h4 class="panel-title">
+		  <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+		    2. Acciones Asociadas al control:
+		  </a>
+		</h4>
+	      </div>
+	      <div id="collapseTwo" class="panel-collapse collapse">
+		<div class="panel-body">
+		  <table id="datagridAccionesPlanTratamiento" name="datagridAccionesPlanTratamiento" class="table table-hover table-striped">
+		    <thead>
+			<th>
+			    <input type="text"  class="form-control" name="txtNombreAccionPlanTratamiento" id="txtNombreAccionPlanTratamiento" placeholder="Accion" />
+			</th>
+			<th>
+			    <select class="form-control" id="cboResponsableAccionPlanTratamiento" name="cboResponsableAccionPlanTratamiento">
+			    	<option> Seleccion un empleado</option>
+			    <?php
+				$query_empleado = $objEmpleado->ConsultarEmpleados($_SESSION["empresa"]);
+                                while($reg2 = $query_empleado->fetchObject()){
+				    echo '<option value="'.$reg2->idempleado.'">'.$reg2->apellidos.' '.$reg2->nombres.'</option>';
+				}
+                            ?>
+			    </select>
+			</th>
+			<th>
+			    <input type="text"  class="form-control" name="txtRecursosAccionPlanTratamiento" id="txtRecursosAccionPlanTratamiento" placeholder="Recursos" />
+			</th>
+			<th>
+			    <input type="date"  class="form-control" name="txtPlazoAccionPlanTratamiento" id="txtPlazoAccionPlanTratamiento" placeholder="Plazo" />
+			</th>
+			<th style="width:20px">
+			    <button type="button" class="btn btn-default" name="btnAgregarAccionPlanTratamiento" id="btnAgregarAccionPlanTratamiento"><span class="glyphicon glyphicon-plus-sign"></span> Agregar</button>
+			</th>
+		    </thead>
+		    <tbody></tbody>
+		  </table>
+		</div>
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+		<h4 class="panel-title">
+		  <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+		    3. Amenazas con el Control asociado:
+		  </a>
+		</h4>
+	      </div>
+	      <div id="collapseThree" class="panel-collapse collapse">
+		<div class="panel-body">
+		  <table id="datagridControlesAsociadosPlanTratmiento" name="datagridControlesAsociadosPlanTratmiento" class="table table-hover table-striped">
+		    <thead>
+			<th style="width:10px;">#</th>
+			<th>Amenaza</th>
+			<th>Activo</th>
+			<th style="width: 100px; text-align: center">Riesgo</th>
+		    </thead>
+		    <tbody>
+			
+		    </tbody>
+		  </table>
+		</div>
+	      </div>
+	    </div>
+	    <div class="panel panel-default">
+	      <div class="panel-heading">
+		<h4 class="panel-title">
+		  <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+		    4. Activos repercutidos:
+		  </a>
+		</h4>
+	      </div>
+	      <div id="collapseFour" class="panel-collapse collapse">
+		<div class="panel-body">
+		    <div>
+			<table width="100%">
+			    <tr>
+				<td>
+				    <select class="form-control" id="cboActivosRepercutidosPlanTratamiento" name="cboActivosRepercutidosPlanTratamiento">
+				    <?php
+					$queryActivos = $objActivo->ConsultarActivos();
+					while($reg = $queryActivos->fetchObject()){
+					    echo '<option value="'.$reg->idactivo.'">'.$reg->activo.'</option>';
+					}
+				    ?>
+				    </select>
+				</td>
+				<td style="width: 20px">
+				    <button type="button" class="btn btn-default" name="btnAgregarActivoPlanTratamiento" id="btnAgregarActivoPlanTratamiento"><span class="glyphicon glyphicon-plus-sign"></span> Agregar</button>
+				</td>
+			    </tr>
+			</table>		    
+		    </div>
+		    <select class="form-control" id="cboActivosRepercutidosListaPlanTratamiento" name="cboActivosRepercutidosListaPlanTratamiento" size="4" style="margin-top: 10px">
+			
+		    </select>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-floppy-disk" ></span> Guardar cambios</button>
+      </div>
+    </div><!-- /.modal-content -->
+    </form>
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+	/*** GLOBAL'S ***/
+	
+	var plan_seleccionado = "";
+	
+	/*** LOAD'S ***/
+	consultarGestionDeRiesgos();
+
+	/*** EVENTOS ***/
+	$(".consultarGR").click(consultarGestionDeRiesgos);
+	$("input[name=chkPlanTratamiento]").click(bloqueaOtrosPlanesTratamiento);
+	
+	/*** FUNCIONES ***/
+	
+	function Asociar(){
+	    var i = 1;
+	    var arr_amenaza = [];
+	    $('input[name=chkAmenaza]').each(function(k, v){
+		if ($(this).attr('checked') == "checked") {
+		    if (plan_seleccionado != "") {
+			i++;
+			arr_amenaza.push($(this).val());
+			    
+			return;
+		    }else{
+			i++;
+			alert("No ha seleccionado un Plan de Tratamiento.");
+			return;
+		    }
+		    
+		}else{
+		    if (i == 1) {
+			alert("No ha seleccionado la(s) amenaza(s).")
+		    }
+		    i++;
+		}
+	    });
+	    console.log(arr_amenaza);
+	    $.post('./ajax/analisis/plan-tratamiento_amenaza_asociar.ajax.php', { amenazas: arr_amenaza, plan: plan_seleccionado }, function(r){
+		if(r != "") alert(r);
+	    });
+	}
+	
+	function bloqueaOtrosPlanesTratamiento(){
+	    if (this.checked) {
+		var seleccionado = this.value;
+		plan_seleccionado = this.value;
+		$("input[name=chkPlanTratamiento]").each(function(k, v){
+		    if (v.id != "chkPlanTratamiento"+seleccionado) {
+			$("#"+v.id).attr('disabled','disabled');
+		    }
+		});
+	    }else{
+		$("input[name=chkPlanTratamiento]").each(function(k, v){
+		    $("#"+v.id).removeAttr('disabled');
+		});
+	    }
+	    
+	};
+	
+	function consultarGestionDeRiesgos(){
+		$("#opcionesbtnMostrarGR li").removeClass("active");
+		var operacion = $(this).attr("data-search") || "mostrar-todos";
+		$.get("./ajax/analisis/gestion-riesgos_consultar.ajax.php",{ operacion: operacion }, function(r){
+			$("table#datagridActivosAmenazasControles tbody").html(r);
+		});
+
+	}
+</script>
+
+<script>
+    /*** LOAD's ****/
+    consultarPlanesDeTratamiento();
+    /*** EVENTOS ***/
+    
+    $("button#btnNuevoPlanDeTratamiento").click(nuevoPlanDeTratamiento);
+    
+    $("button#btnAgregarAccionPlanTratamiento").click(agregarAccionPlanTratamiento);
+    $("button#btnAgregarActivoPlanTratamiento").click(agregarActivoRepercutido);
+    
+    $("form#frmModalPlanTratamientoDetalle").submit(enviarPlanTratamientoDetalle);
+    /*** FUNCIONES ***/
+    
+    function enviarPlanTratamientoDetalle(e){
+	e.preventDefault();
+	var form = $(this);
+	$.post('./ajax/analisis/plan-tratamiento_guardar.ajax.php', form.serialize(), function(r){
+	    if (r != "") {
+		alert(r);
+	    }
+	});
+    };
+    
+    function LimpiarTodoPlanTratamiento(){
+	$("input#txtIDPlanTratamiento").val("");
+	$("input#txtNombrePlanTratamiento").val("");
+	$("textarea#txtControlSOAPlanTratamiento").val("");
+	$("select#cboResponsablePlanTratamiento option:first-child").attr("selected", "selected");
+	$("textarea#txtRecursosPlanTratamiento").val("");
+	$("input#txtPlazoPlanTratamiento").val("");
+	$("input#txtCosteAsociadoPlanTratamiento").val("");
+	$("textarea#txtObservacionesPlanTratamiento").val("");
+	
+	$("select#cboIndicadoresListaPlanTratamiento").html("");
+	$("table#datagridAccionesPlanTratamiento tbody").html("");
+	$("table#datagridControlesAsociadosPlanTratmiento tbody").html("");
+	$("select#cboActivosRepercutidosListaPlanTratamiento").html("");
+    }
+    
+    function agregarAccionPlanTratamiento(){
+	var data = {
+	    plan : $("input#txtIDPlanTratamiento").val()
+	  , accion : $("input#txtNombreAccionPlanTratamiento").val()
+	  , empleado : $("select#cboResponsableAccionPlanTratamiento").val()
+	  , recursos : $("input#txtRecursosAccionPlanTratamiento").val()
+	  , plazo    : $("input#txtPlazoAccionPlanTratamiento").val()
+	};
+	
+	$.post('./ajax/analisis/plan-tratamiento_accion_agreagar.ajax.php', data, function(r){
+	    if (r != "") {
+		alert(r);
+		return;
+	    }
+	    consultarAccionesPlanTratamiento();
+	});
+	  
+    }
+    
+    function consultarAccionesPlanTratamiento(){
+	$.get('./ajax/analisis/plan-tratamiento_accion_consultar.ajax.php', { plan: $("input#txtIDPlanTratamiento").val() }, function(r){
+	    $("table#datagridAccionesPlanTratamiento tbody").html(r);
+	});
+    };
+    
+    function agregarActivoRepercutido(){
+	var activo = $("select#cboActivosRepercutidosPlanTratamiento").val()
+	  , plan   = $("input#txtIDPlanTratamiento").val()
+	  , planHTML = $("select#cboActivosRepercutidosPlanTratamiento option:selected").html();
+	  
+	$.post("./ajax/analisis/plan-tratamiento_activo_agregar.ajax.php", { plan: plan, activo: activo }, function(r){
+	    if (r != "") {
+		alert(r);
+		return;
+	    }
+	    $("select#cboActivosRepercutidosListaPlanTratamiento").append('<option value="'+plan+'">'+planHTML+'</option>');
+	});
+    }
+    
+    function modalPlanTratamiento(plan) {
+	LimpiarTodoPlanTratamiento();
+	$("input#txtIDPlanTratamiento").val(plan);
+	
+	/*** CARGAR INFORMACION DEL PLAN ***/
+	
+	$.getJSON('./ajax/analisis/plan-tratamiento_abrir.ajax.php', { plan: plan }, function(r){
+	    var datos_generales = r.datos_generales
+	      , indicadores = r.indicadores
+	      , acciones_asociadas = r.acciones_asociadas
+	      , amenazas_asociadas = r.amenazas_asociadas
+	      , activos_repercutidos= r.activos_repercutidos;
+	      
+	    $("input#txtNombrePlanTratamiento").val(datos_generales.nombres);
+	    $("textarea#txtControlSOAPlanTratamiento").val(datos_generales.controlSOA);
+	    $("select#cboResponsablePlanTratamiento option[value="+datos_generales.idempleado+"]").attr("selected", "selected");
+	    $("textarea#txtRecursosPlanTratamiento").val(datos_generales.recursos);
+	    $("input#txtPlazoPlanTratamiento").val(datos_generales.plazo);
+	    $("input#txtCosteAsociadoPlanTratamiento").val(datos_generales.coste);
+	    $("textarea#txtObservacionesPlanTratamiento").val(datos_generales.observaciones);    
+  
+	    $(indicadores).each(function(k, v){
+		$("select#cboIndicadoresListaPlanTratamiento").append('<option value="'+v.idplan_tratamiento+','+v.idindicador+'">'+v.detalle+'</option>');
+	    });
+	    
+	    
+	    $(acciones_asociadas).each(function(k, v){
+		$("table#datagridAccionesPlanTratamiento tbody").append('<tr><td>'+v.nombre+'</td><td>'+v.nombres+'</td><td>'+v.recursos+'</td><td>'+v.plazo+'</td><td></td></tr>');
+	    });
+	    
+	    $(amenazas_asociadas).each(function(k, v){
+		console.log(v);
+		$("table#datagridControlesAsociadosPlanTratmiento tbody").append('<tr><td>1</td><td>'+v.amenaza+'</td><td>'+v.activo+'</td><td style="background:'+v.color+';text-align:center">'+v.riesgo+'</td></tr>');
+	    });
+	    
+	    $(activos_repercutidos).each(function(k, v){
+		$("select#cboActivosRepercutidosListaPlanTratamiento").append('<option value="'+v.idplan_tratamiento+','+v.idactivo+'">'+v.activo+'</option>');
+	    });
+	    
+	});
+	
+	$("div#modalPlanTratamiento").modal("show");
+	return false;
+    }
+    
+    function nuevoPlanDeTratamiento(){
+	var data = { empresa: <?=$_SESSION["empresa"]?> };
+	$.post("./ajax/analisis/plan-tratamiento_nuevo.ajax.php", data, function(r){
+	    if (r != "") {
+		alert(r);
+	    }	    
+	});
+    };
+    
+    function consultarPlanesDeTratamiento(){
+	$("table#datagridPlanesDeTratamiento tbody").html("");
+	var data = { empresa: <?=$_SESSION["empresa"]?> };
+	$.get("./ajax/analisis/plan-tratamiento_consultar.ajax.php", data, function(r){
+	    $("table#datagridPlanesDeTratamiento tbody").html(r);
+	});
+    }
+    
+	$('#detalleGestionDeRiesgos a').click(function (e) {
+	  e.preventDefault()
+	  $(this).tab('show')
+	})
+</script>
+
+<script>
+    $("a#controlesPropuesto").click(ControlesPropuestos);
+    $("select#cboPlanesDeTratamiento").change(cargarControlesPropuestoSegunPlan);
+    $("form#frmControlesPropuestos").submit(agregarControlPropuesto);
+    
+    function ControlesPropuestos() {
+	cargarControles();
+	cargarPlanesTratamiento();
+    }
+    
+    function agregarControlPropuesto(e){
+	e.preventDefault();
+	var data = $(this).serialize();
+	$.post('./ajax/analisis/plan-tratamiento_controles_propuestos_agregar.ajax.php',data, function(r){
+	    if (r != "") {
+		alert(r);
+	    }
+	    cargarControlesPropuestoSegunPlan();
+	});
+    }
+    
+    function cargarControles(){
+	$.get("./ajax/inicio/analisis_gap_consultar_combo.ajax.php", function(r){
+            $("form#frmControlesPropuestos select#cboControles").html(r);
+        });
+    }
+    
+    function cargarPlanesTratamiento(){
+	$.get("./ajax/analisis/plan-tratamiento_combo_consultar.ajax.php", function(r){
+            $("form#frmControlesPropuestos select#cboPlanesDeTratamiento").html(r);
+        });
+    }
+    
+    function cargarControlesPropuestoSegunPlan() {
+	var plan = $("select#cboPlanesDeTratamiento").val()
+	  , destino = "table#datagridControlPropuesto tbody";
+	
+	$.get('./ajax/analisis/plan-tratamiento_controles_propuestos_consultar.ajax.php', { plan: plan }, function(r){
+	    $(destino).html(r);
+	});
+    }
+    
+    function EliminarControlPropuesto(plan, control) {
+	var rpta =  confirm('¿Desea eliminar el control propuesto?');
+	if (rpta) {
+	    $.post('./ajax/analisis/plan-tratamiento_controles_propuestos_eliminar.ajax.php', { plan: plan, control: control }, function(r){
+		if (r != "") {
+		    alert(r);
+		}
+		cargarControlesPropuestoSegunPlan();
+	    });
+	}
+	
+    }
+</script>
